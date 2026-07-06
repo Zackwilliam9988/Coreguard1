@@ -515,11 +515,6 @@ export default function App() {
               <div className="absolute inset-0 bg-white/70 backdrop-blur-[0.5px] z-1" />
               <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/80 to-slate-50 z-1" />
 
-              {/* Active Monitor Status Widget */}
-              <div className="absolute top-10 left-10 text-[10px] font-mono text-slate-600 font-bold z-10 tracking-widest uppercase flex items-center gap-2 bg-white/85 px-3.5 py-1.5 rounded-full border border-slate-200/80 shadow-sm">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#D95B16] animate-ping" />
-                <span>MONITOR ACTIVE // SECURE SYSTEM</span>
-              </div>
 
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
                 <div className="flex flex-col items-center justify-center text-center space-y-8 max-w-4xl mx-auto">
