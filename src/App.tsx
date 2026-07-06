@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import logo from "./assets/images/coreguard_logo_1782336134989.jpg";
 import { 
   Shield, 
   Phone, 
@@ -386,10 +387,10 @@ export default function App() {
 
         <div className="relative text-center max-w-sm px-6">
           <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 bg-white rounded-full border border-slate-200 shadow-xl relative animate-bounce overflow-hidden flex items-center justify-center">
-              <img 
-                src="/src/assets/images/coreguard_logo_1782336134989.jpg" 
-                alt="CoreGuard Logo" 
+              <div className="w-20 h-20 bg-white rounded-full border border-slate-200 shadow-xl relative animate-bounce overflow-hidden flex items-center justify-center">
+              <img
+                src={logo}
+                alt="CoreGuard Logo"
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
@@ -1119,9 +1120,9 @@ export default function App() {
             <div className="lg:col-span-4 space-y-4">
               <div className="flex items-center gap-2.5">
                 <div className="relative w-9 h-9 rounded-full border border-slate-200 overflow-hidden bg-white shrink-0 shadow-sm">
-                  <img 
-                    src="/src/assets/images/coreguard_logo_1782336134989.jpg" 
-                    alt="CoreGuard Logo" 
+                  <img
+                    src={logo}
+                    alt="CoreGuard Logo"
                     className="w-full h-full object-cover"
                     referrerPolicy="no-referrer"
                   />

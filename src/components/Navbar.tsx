@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import logo from "../assets/images/coreguard_logo_1782336134989.jpg";
 import { 
   Shield, 
   Phone, 
@@ -73,9 +74,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               {/* Custom image logo with active status dot */}
               <div className="relative w-10 h-10 rounded-full border border-[#D95B16]/30 overflow-hidden transition-all duration-300 group-hover:scale-105 shadow-[0_0_15px_rgba(217,91,22,0.15)] group-hover:shadow-[0_0_20px_rgba(217,91,22,0.25)] bg-slate-50 shrink-0">
-                <img 
-                  src="/src/assets/images/coreguard_logo_1782336134989.jpg" 
-                  alt="CoreGuard Logo" 
+                <img
+                  src={logo}
+                  alt="CoreGuard Logo"
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
@@ -246,9 +247,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <div className="flex items-center justify-between border-b border-slate-100 pb-5 mb-6">
                   <div className="flex items-center gap-3">
                     <div className="relative w-8 h-8 rounded-full border border-[#D95B16]/20 overflow-hidden bg-slate-50">
-                      <img 
-                        src="/src/assets/images/coreguard_logo_1782336134989.jpg" 
-                        alt="CoreGuard Logo" 
+                      <img
+                        src={logo}
+                        alt="CoreGuard Logo"
                         className="w-full h-full object-cover"
                         referrerPolicy="no-referrer"
                       />
