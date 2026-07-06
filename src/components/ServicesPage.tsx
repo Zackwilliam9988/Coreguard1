@@ -1,0 +1,389 @@
+import React, { useState } from "react";
+import { Service } from "../types";
+import { LucideIcon } from "./LucideIcon";
+import { 
+  Search, 
+  Sparkles, 
+  ArrowLeft, 
+  ChevronRight, 
+  BookOpen, 
+  Cpu, 
+  Sliders, 
+  Compass, 
+  TrendingUp, 
+  ArrowUpRight, 
+  ShieldAlert
+} from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+
+interface ServicesPageProps {
+  services: Service[];
+  onSelectService: (service: Service) => void;
+  onBackToHome: () => void;
+  onTriggerQuote: (serviceId?: string) => void;
+}
+
+// Highly realistic and domain-specific engineering specs for local security/telecom services
+const serviceTelemetry: Record<string, { label: string; val: string }[]> = {
+  "cctv-install": [
+    { label: "Optimum Feed", val: "4K UHD IP Streams" },
+    { label: "Night Vision", val: "100m Smart IR Array" },
+    { label: "Storage Mode", val: "RAID Resilient Local/Cloud" }
+  ],
+  "fiber-splicing": [
+    { label: "Splicer Tech", val: "Fujikura Core Thermal" },
+    { label: "Insertion Loss", val: "<0.02 dB Decibel Limit" },
+    { label: "Standard Class", val: "ITU-T G.652 Single-mode" }
+  ],
+  "network-setup": [
+    { label: "Port Capacity", val: "10 Gbps Backplane Link" },
+    { label: "AP Coverage", val: "Beamforming 3D Mapping" },
+    { label: "VLAN Segments", val: "Isolated Layer 3 Routing" }
+  ],
+  "cctv-repair": [
+    { label: "SLA Response", val: "<60 Mins Urgent Dispatch" },
+    { label: "Replacement Mode", val: "Genuine Manufacturer OEM" },
+    { label: "Diagnostic Check", val: "RF Signal/Voltage Sweep" }
+  ],
+  "fiber-testing": [
+    { label: "Scan Method", val: "OTDR Dual 1310/1550nm" },
+    { label: "Fault Precision", val: "Within ±1 Centimeter" },
+    { label: "Max Sweep Line", val: "120 Kilometer Range" }
+  ],
+  "biometric-system": [
+    { label: "Detection Engine", val: "Dynamic Facial / IR Biometrics" },
+    { label: "Capture Latency", val: "Instant <0.2 Seconds" },
+    { label: "Lock Interface", val: "Electromagnetic Dry Relay" }
+  ],
+  "structured-cabling": [
+    { label: "Wire Standard", val: "Cat6/6A Shielded Twisted-Pair" },
+    { label: "Frequency Max", val: "500 MHz Solid Performance" },
+    { label: "Conduit Shielding", val: "Weatherproof Armored Trunking" }
+  ],
+  "remote-cctv": [
+    { label: "Remote Access", val: "Encrypted SSL/TLS DDNS" },
+    { label: "Client Platform", val: "Native iOS / Android Apps" },
+    { label: "Ping Threshold", val: "<80ms Packet Latency" }
+  ]
+};
+
+const fallbackTelemetry = [
+  { label: "SLA Warranty", val: "1-Year Commercial Full" },
+  { label: "Support Status", val: "24/7 Priority Remote Help" },
+  { label: "Hardware Sourcing", val: "Original Brand Certified" }
+];
+
+export const ServicesPage: React.FC<ServicesPageProps> = ({
+  services,
+  onSelectService,
+  onBackToHome,
+  onTriggerQuote,
+}) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<"all" | "security" | "fiber" | "network">("all");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+  // Filter categories helper
+  const filteredServices = services.filter((s) => {
+    const matchesSearch = 
+      s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.fullDescription.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    if (selectedCategory === "all") return matchesSearch;
+    if (selectedCategory === "security") {
+      return matchesSearch && (s.id.includes("cctv") || s.id.includes("biometric") || s.id.includes("home"));
+    }
+    if (selectedCategory === "fiber") {
+      return matchesSearch && s.id.includes("fiber");
+    }
+    if (selectedCategory === "network") {
+      return matchesSearch && (s.id.includes("network") || s.id.includes("cabling") || s.id.includes("support"));
+    }
+    return matchesSearch;
+  });
+
+  // Framer motion variants for coordinated container staggered load
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 25, scale: 0.97 },
+    show: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1,
+      transition: { 
+        type: "spring", 
+        stiffness: 110, 
+        damping: 18 
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      scale: 0.95, 
+      y: 10,
+      transition: { duration: 0.2 } 
+    }
+  };
+
+  const filterTabs = [
+    { id: "all", label: "All Systems" },
+    { id: "security", label: "Surveillance & Access" },
+    { id: "fiber", label: "Fiber Optics (OTDR)" },
+    { id: "network", label: "Structured Networking" }
+  ] as const;
+
+  return (
+    <div className="pt-32 pb-28 bg-white min-h-screen text-slate-800 font-sans relative overflow-hidden">
+      
+      {/* Decorative High-Tech Background Lines and Grid Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+      
+      {/* Visual Ambient Orange Glows */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[500px] bg-[radial-gradient(ellipse_at_top,rgba(217,91,22,0.05),transparent_60%)] pointer-events-none" />
+      <div className="absolute top-1/3 left-0 w-[400px] h-[400px] bg-[radial-gradient(circle_at_center,rgba(217,91,22,0.02),transparent_60%)] pointer-events-none" />
+      <div className="absolute bottom-10 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(217,91,22,0.03),transparent_60%)] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        
+        {/* Navigation Return Hook */}
+        <div className="mb-10 text-left">
+          <motion.button 
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            onClick={onBackToHome}
+            className="group inline-flex items-center gap-2.5 text-xs font-bold font-mono tracking-widest text-[#D95B16] hover:text-[#EA580C] uppercase transition-all duration-300 cursor-pointer bg-slate-50 border border-slate-100 hover:border-orange-200 px-4.5 py-2.5 rounded-full shadow-sm"
+          >
+            <ArrowLeft size={13} className="group-hover:-translate-x-1 transition-transform stroke-[2.5]" />
+            <span>Return to Landing</span>
+          </motion.button>
+        </div>
+
+        {/* HERO HEADER SECTION WITH TECHNICAL METADATA */}
+        <div className="text-left mb-14">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+            <div className="max-w-3xl space-y-3">
+              
+              <h1 className="font-display font-black text-4xl sm:text-6xl text-slate-900 tracking-tight leading-none">
+                Our Security & <br className="hidden sm:block" />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D95B16] to-[#EA580C]">
+                  Networking Solutions
+                </span>
+              </h1>
+              
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-2xl pt-1">
+                Deploying certified network topologies and military-grade surveillance structures across Islamabad, Rawalpindi, and Punjab. Select any solution below to inspect micro-decibel metrics and target specifications.
+              </p>
+            </div>
+            
+            {/* Quick stats panel */}
+            <motion.div 
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="bg-slate-50 border border-slate-100 p-5 rounded-2xl flex items-center gap-8 shadow-md self-start lg:self-auto relative group overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/5 to-transparent pointer-events-none" />
+              <div>
+                <span className="block text-3xl font-black text-slate-900 leading-none tracking-tight">{services.length}</span>
+                <span className="text-[9px] font-mono uppercase tracking-wider text-slate-500 font-bold mt-1.5 block">Capabilities</span>
+              </div>
+              <div className="h-10 w-[1px] bg-slate-200" />
+              <div>
+                <span className="block text-3xl font-black text-[#D95B16] leading-none tracking-tight">Zero</span>
+                <span className="text-[9px] font-mono uppercase tracking-wider text-slate-500 font-bold mt-1.5 block">Loss Rate</span>
+              </div>
+              <div className="h-10 w-[1px] bg-slate-200" />
+              <div>
+                <span className="block text-3xl font-black text-[#EA580C] leading-none tracking-tight">100%</span>
+                <span className="text-[9px] font-mono uppercase tracking-wider text-slate-500 font-bold mt-1.5 block">Certified</span>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* CONTROLS BAR: SEARCH & FLEXIBLE CATEGORIES */}
+        <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4.5 mb-12 shadow-sm flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-5">
+          
+          {/* Categories select row with dynamic Framer Motion slider indicator */}
+          <div className="flex flex-wrap items-center gap-2 order-2 xl:order-1">
+            {filterTabs.map((tab) => {
+              const isActive = selectedCategory === tab.id;
+              return (
+                <button 
+                  key={tab.id}
+                  onClick={() => setSelectedCategory(tab.id)}
+                  className={`relative px-4.5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-wider cursor-pointer transition-colors duration-300 outline-none z-10 ${
+                    isActive ? "text-white" : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  {/* Smooth backdrop layout slider */}
+                  {isActive && (
+                    <motion.div 
+                      layoutId="activeCategoryTab"
+                      transition={{ type: "spring", stiffness: 350, damping: 28 }}
+                      className="absolute inset-0 bg-gradient-to-r from-[#D95B16] to-[#EA580C] rounded-xl z-[-1] shadow-[0_4px_12px_rgba(217,91,22,0.25)]"
+                    />
+                  )}
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Advanced Search bar input */}
+          <div className="relative flex-1 max-w-xl order-1 xl:order-2">
+            <Search 
+              size={15} 
+              className={`absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
+                isSearchFocused ? "text-[#D95B16]" : "text-slate-400"
+              }`} 
+            />
+            <input 
+              type="text"
+              placeholder="Search telemetry standards, cable categories, or specifications..."
+              value={searchQuery}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-white border border-slate-200 focus:border-[#D95B16]/80 focus:bg-white focus:ring-1 focus:ring-[#D95B16]/35 rounded-xl py-3 pl-10 pr-16 text-xs font-semibold text-slate-800 outline-none transition-all placeholder:text-slate-400 font-sans shadow-inner"
+            />
+            
+            {/* Context feedback pill or clear action inside search */}
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+              {searchQuery ? (
+                <button 
+                  onClick={() => setSearchQuery("")}
+                  className="bg-slate-100 hover:bg-slate-200 text-[9px] font-mono font-extrabold text-[#D95B16] px-2.5 py-1 rounded transition-all uppercase cursor-pointer"
+                >
+                  Clear
+                </button>
+              ) : (
+                <div className="hidden sm:flex items-center gap-1 bg-slate-50 border border-slate-100 text-[9.5px] font-mono text-slate-500 px-2 py-0.5 rounded uppercase">
+                  <Sliders size={9} />
+                  <span>FILTER</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+        </div>
+
+        {/* GRID OF SERVICES WITH ADVANCED STAGGER AND CARD RENDERS */}
+        <AnimatePresence mode="popLayout">
+          {filteredServices.length > 0 ? (
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              exit="hidden"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8"
+            >
+              {filteredServices.map((service) => {
+                return (
+                  <motion.div
+                    layout
+                    key={service.id}
+                    variants={cardVariants}
+                    whileHover={{ y: -5 }}
+                    className="bg-white border border-slate-100 rounded-3xl p-5.5 relative flex flex-col justify-between shadow-md hover:shadow-xl hover:border-orange-100 transition-all duration-300 group overflow-hidden"
+                  >
+                    <div>
+                      {/* Image banner wrapper with full overlays */}
+                      <div className="relative w-full h-44 rounded-2xl overflow-hidden mb-5 border border-slate-100 bg-slate-50">
+                        <img 
+                          src={service.imageUrl || "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80"} 
+                          alt={service.title} 
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover opacity-95 group-hover:opacity-100 group-hover:scale-[1.04] transition-all duration-700 ease-out"
+                        />
+                        {/* Shimmer gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 via-transparent to-transparent" />
+                        
+                        {/* Dynamic category badge overlay inside image */}
+                        <span className="absolute top-3 left-3 text-[7.5px] font-mono font-black text-white bg-slate-900/80 backdrop-blur-md px-2.5 py-1 rounded-lg uppercase tracking-wider">
+                          {service.id.includes("fiber") ? "OTDR Fiber" : service.id.includes("cctv") ? "Surveillance" : "Networking"}
+                        </span>
+                        
+                        {/* Featured popular badge */}
+                        {service.hot && (
+                          <span className="absolute top-3 right-3 text-[8px] font-mono font-black text-white bg-[#D95B16] px-2.5 py-1 rounded-full uppercase tracking-wider shadow-md z-10">
+                            POPULAR
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Title, Category metadata & description */}
+                      <div className="flex items-start justify-between gap-3 mb-2.5 text-left">
+                        <h3 className="font-sans font-extrabold text-lg text-slate-900 group-hover:text-[#D95B16] transition-colors duration-300 tracking-tight leading-tight">
+                          {service.title}
+                        </h3>
+                        <div className="h-8 w-8 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-[#D95B16] group-hover:bg-[#D95B16]/10 transition-colors shrink-0">
+                          <LucideIcon name={service.iconName} size={15} className="stroke-[2.2]" />
+                        </div>
+                      </div>
+                      
+                      <p className="text-slate-500 text-xs leading-relaxed text-left font-sans mb-5 line-clamp-3 h-[54px] overflow-hidden">
+                        {service.description}
+                      </p>
+                    </div>
+
+                    {/* Integrated CTA bottom action links */}
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto">
+                      <button 
+                        onClick={() => onSelectService(service)}
+                        className="text-[#D95B16] hover:text-[#EA580C] text-[11px] font-bold font-mono tracking-wider uppercase transition-all duration-300 flex items-center gap-1 group/link cursor-pointer bg-transparent border-none"
+                      >
+                        <span>Explore more</span>
+                        <ChevronRight size={13} className="transform transition-transform duration-300 group-hover/link:translate-x-1 stroke-[2.5]" />
+                      </button>
+                      
+                      <button 
+                        onClick={() => onTriggerQuote(service.id)}
+                        className="text-slate-400 hover:text-[#D95B16] text-[10.5px] font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer bg-transparent border-none"
+                        title="Schedule Installation Quote"
+                      >
+                        Get Quote
+                      </button>
+                    </div>
+
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-20 bg-slate-50 border border-slate-100 rounded-3xl max-w-xl mx-auto mt-6"
+            >
+              <div className="h-12 w-12 rounded-2xl bg-orange-50 border border-orange-100 text-[#D95B16] flex items-center justify-center mx-auto mb-4">
+                <ShieldAlert size={22} />
+              </div>
+              <h3 className="text-slate-900 font-bold text-base mb-1.5">No Infrastructure Found</h3>
+              <p className="text-slate-550 text-xs font-sans max-w-sm mx-auto leading-relaxed">
+                No security hardware or structural parameters matched "{searchQuery}". Restructure your query or clear filters to examine standard scopes.
+              </p>
+              <button 
+                onClick={() => { setSearchQuery(""); setSelectedCategory("all"); }}
+                className="mt-5 bg-[#D95B16]/10 hover:bg-[#D95B16]/20 border border-[#D95B16]/30 text-[#D95B16] px-5 py-2.5 rounded-xl text-xs font-bold uppercase transition-all tracking-widest cursor-pointer"
+              >
+                Reset Filter Parameters
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+      </div>
+    </div>
+  );
+};

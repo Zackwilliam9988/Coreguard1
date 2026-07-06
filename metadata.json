@@ -1,0 +1,8 @@
+{
+  "name": "Remix: CoreGuard",
+  "description": "Professional CCTV, Fiber Optic \u0026 Networking security solutions for homes and businesses. Secure. Connect. Protect.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
