@@ -187,10 +187,10 @@ export const SophiaChat: React.FC = () => {
       mode: "no-cors"
     })
     .then(() => {
-      console.log("Sophia secure transmission completed:", selectedServiceTitle);
+      import("../utils/logger").then(({ log }) => log("Sophia secure transmission completed:", selectedServiceTitle)).catch(() => {});
     })
     .catch((err) => {
-      console.warn("Sophia telemetry handled", err);
+      import("../utils/logger").then(({ warn }) => warn("Sophia telemetry handled", err)).catch(() => {});
     })
     .finally(() => {
       if (isFinal) {

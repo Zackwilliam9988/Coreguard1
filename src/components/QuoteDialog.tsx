@@ -94,10 +94,11 @@ export const QuoteDialog: React.FC<QuoteDialogProps> = ({
       mode: "no-cors"
     })
     .then(() => {
-      console.log("Form data sent successfully to Google Apps Script");
+      // log success
+      import("../utils/logger").then(({ log }) => log("Form data sent successfully to Google Apps Script")).catch(() => {});
     })
     .catch((err) => {
-      console.warn("Form submission reached service with status indicator", err);
+      import("../utils/logger").then(({ warn }) => warn("Form submission reached service with status indicator", err)).catch(() => {});
     })
     .finally(() => {
       // Clear the loading loop interval and move to success state

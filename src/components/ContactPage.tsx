@@ -13,6 +13,7 @@ import {
   Cpu
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { log, warn } from "../utils/logger";
 import { SuccessNotification } from "./SuccessNotification";
 import { SERVICES } from "../data";
 
@@ -85,10 +86,10 @@ export const ContactPage: React.FC<ContactPageProps> = ({ contactInfo, onTrigger
       mode: "no-cors"
     })
     .then(() => {
-      console.log("Contact form data sent successfully to Google Apps Script");
+      log("Contact form data sent successfully to Google Apps Script");
     })
     .catch((err) => {
-      console.warn("Contact form submission reached service with status indicator", err);
+      warn("Contact form submission reached service with status indicator", err);
     })
     .finally(() => {
       setIsSubmitting(false);
