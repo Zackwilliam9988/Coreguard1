@@ -53,7 +53,7 @@ export const SERVICES: Service[] = [
     fullDescription: "Streamline employee clock-ins and increase floor security. We configure robust standalone fingerprint or contactless IR face recognition scanners, integrate door locking mechanisms, and install intuitive admin desktop software platforms.",
     iconName: "Fingerprint",
     hot: false,
-    imageUrl: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1601597111158-2fceff270190?auto=format&fit=crop&w=600&q=80",
   },
   {
     id: "structured-cabling",

@@ -61,12 +61,12 @@ export default function App() {
   
   // Manageable Contact Details
   const [contactInfo, setContactInfo] = useState({
-    phone: "+92 300 1234567",
+    phone: "+92 318 5826202",
     email: "support@coreguard.com",
     address: "I-8 Markaz, Executive Tower, Islamabad",
     latitude: "33.6844",
     longitude: "73.0479",
-    whatsapp: "+92 300 1234567"
+    whatsapp: "+92 318 5826202"
   });
 
   // Manageable Hero & About Config
@@ -86,30 +86,6 @@ export default function App() {
     description1: "CoreGuard has emerged as a premier technology solution provider, introducing extreme attention-to-detail into hardware installations. We service commercial buildings, residential hubs, and industrial warehouses, laying fast optical fibers and smart networks.",
     description2: "Our engineering guidelines bypass general shortcuts, delivering certified calibrations, neat cabling, and lifetime peace of mind. Let us protect what matters to you with the highest standard in security systems."
   });
-
-  // Authentication & Click States
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [loginError, setLoginError] = useState("");
-  
-  // Admin Panel Control States
-  const [showAdminPanel, setShowAdminPanel] = useState(false);
-  const [activeAdminTab, setActiveAdminTab] = useState<"services" | "contact" | "content" | "security">("services");
-  
-  // Admin Editing Forms
-  const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
-  const [serviceForm, setServiceForm] = useState<Partial<Service>>({
-    title: "",
-    price: "",
-    description: "",
-    fullDescription: "",
-    iconName: "Shield",
-    hot: false,
-    imageUrl: ""
-  });
-  const [isAddingNewService, setIsAddingNewService] = useState(false);
 
   // General App States
   const [currentRoute, setCurrentRoute] = useState<{ page: string; serviceId?: string }>({ page: "home" });
@@ -145,8 +121,8 @@ export default function App() {
       try {
         const parsed = JSON.parse(savedServices) as Service[];
         const migrated = parsed.map(s => {
-          if (s.id === "biometric-system" && (!s.imageUrl || s.imageUrl.includes("imimg.com"))) {
-            return { ...s, imageUrl: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80" };
+          if (s.id === "biometric-system" && (!s.imageUrl || s.imageUrl.includes("imimg.com") || s.imageUrl.includes("photo-1563986768609-322da13575f3"))) {
+            return { ...s, imageUrl: "https://images.unsplash.com/photo-1601597111158-2fceff270190?auto=format&fit=crop&w=600&q=80" };
           }
           return s;
         });
@@ -218,12 +194,6 @@ export default function App() {
         setAboutInfo(JSON.parse(savedAbout));
       } catch (e) {}
     }
-
-    // Is logged in session persisted
-    const savedLoginSession = localStorage.getItem("coreguard_is_logged_in");
-    if (savedLoginSession === "true") {
-      setIsLoggedIn(true);
-    }
   }, []);
 
   // Sync to database savers
@@ -257,45 +227,7 @@ export default function App() {
     setStats(updated);
   };
 
-  // Reset core database to pre-filled factory defaults
-  const handleResetToDefaults = () => {
-    if (confirm("Are you sure you want to reset all dynamic modifications? This will clear the backend data database and reload the initial default copy.")) {
-      localStorage.removeItem("coreguard_services_db");
-      localStorage.removeItem("coreguard_benefits_db");
-      localStorage.removeItem("coreguard_stats_db");
-      localStorage.removeItem("coreguard_contact_db");
-      localStorage.removeItem("coreguard_hero_db");
-      localStorage.removeItem("coreguard_about_db");
-      
-      setServices(DEFAULT_SERVICES);
-      setBenefits(DEFAULT_BENEFITS);
-      setStats(DEFAULT_STATS);
-      setContactInfo({
-        phone: "+92 300 1234567",
-        email: "support@coreguard.com",
-        address: "I-8 Markaz, Executive Tower, Islamabad",
-        latitude: "33.6844",
-        longitude: "73.0479",
-        whatsapp: "+92 300 1234567"
-      });
-      setHeroInfo({
-        title1: "Powering Networks",
-        title2: "Through",
-        highlightText: "Security & Precision",
-        tagline: "Professional HD CCTV, high-capacity fusion splicing, and robust structured cabling solutions designed to keep your business fully connected and absolutely secure.",
-        cta1: "Get a Quote",
-        cta2: "Explore Services"
-      });
-      setAboutInfo({
-        title: "Who We Are",
-        tagline: "Secure. Connect. Protect.",
-        headline: "Your Premier Infrastructure Systems Engineering Team",
-        description1: "CoreGuard has emerged as a premier technology solution provider, introducing extreme attention-to-detail into hardware installations. We service commercial buildings, residential hubs, and industrial warehouses, laying fast optical fibers and smart networks.",
-        description2: "Our guidelines bypass general shortcuts, delivering certified calibrations, neat cabling, and lifetime peace of mind. Let us protect what matters to you with the highest standard in security systems."
-      });
-      alert("Database reset to factory defaults successfully!");
-    }
-  };
+
 
   // Core loading trigger mimics security sweep
   useEffect(() => {
@@ -340,9 +272,6 @@ export default function App() {
     const hash = window.location.hash;
     const search = window.location.search;
     
-    if (path === "/adminlogin" || path === "/adminlogin/" || hash === "#/adminlogin" || hash === "#adminlogin") {
-      return { page: "adminlogin" };
-    }
     if (path === "/contact" || path === "/contact/" || hash === "#/contact" || hash === "#contact") {
       return { page: "contact" };
     }
@@ -387,49 +316,23 @@ export default function App() {
       url = "/why-us";
     } else if (route.page === "contact") {
       url = "/contact";
-    } else if (route.page === "adminlogin") {
-      url = "/adminlogin";
     }
     
     window.history.pushState(null, "", url);
     window.dispatchEvent(new Event("popstate"));
   };
 
-  const navigateToAdmin = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    navigateTo({ page: "adminlogin" });
-  };
-
-  const clearAdminRoute = () => {
-    if (window.location.pathname === "/adminlogin" || window.location.pathname === "/adminlogin/") {
-      window.history.pushState(null, "", "/");
-    } else if (window.location.hash === "#/adminlogin" || window.location.hash === "#adminlogin") {
-      window.history.pushState(null, "", window.location.pathname);
-    }
-  };
-
   useEffect(() => {
     const checkRoute = () => {
       const parsed = parseCurrentRoute();
       
-      if (parsed.page === "adminlogin") {
-        if (isLoggedIn) {
-          setShowAdminPanel(true);
-        } else {
-          setShowLoginModal(true);
-        }
-      } else {
-        setShowAdminPanel(false);
-        setShowLoginModal(false);
-        
-        // Dynamic premium page loading transitions
-        setPageLoading(true);
-        setTimeout(() => {
-          setCurrentRoute(parsed);
-          setPageLoading(false);
-          window.scrollTo(0, 0);
-        }, 350);
-      }
+      // Dynamic premium page loading transitions
+      setPageLoading(true);
+      setTimeout(() => {
+        setCurrentRoute(parsed);
+        setPageLoading(false);
+        window.scrollTo(0, 0);
+      }, 350);
     };
 
     checkRoute();
@@ -441,36 +344,9 @@ export default function App() {
       window.removeEventListener("popstate", checkRoute);
       window.removeEventListener("hashchange", checkRoute);
     };
-  }, [isLoggedIn]);
+  }, []);
 
-  // Admin login authentication
-  const handleAdminVerify = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Check credentials inside localstorage or fallback
-    const configuredEmail = localStorage.getItem("coreguard_admin_email") || "admin@coreguard.com";
-    const configuredPassword = localStorage.getItem("coreguard_admin_password") || "admin";
 
-    if (loginEmail.trim() === configuredEmail && loginPassword.trim() === configuredPassword) {
-      setIsLoggedIn(true);
-      localStorage.setItem("coreguard_is_logged_in", "true");
-      setShowLoginModal(false);
-      setLoginError("");
-      setLoginEmail("");
-      setLoginPassword("");
-      setShowAdminPanel(true);
-    } else {
-      setLoginError("Invalid administrative credentials. Attempt logged.");
-    }
-  };
-
-  // Admin sign out
-  const handleAdminLogout = () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem("coreguard_is_logged_in");
-    setShowAdminPanel(false);
-    clearAdminRoute();
-  };
 
   const triggerQuote = (serviceId?: string) => {
     setPreselectedService(serviceId);
@@ -495,80 +371,7 @@ export default function App() {
     }, 1200);
   };
 
-  // Service admin forms handlings
-  const handleEditClick = (srv: Service) => {
-    setEditingServiceId(srv.id);
-    setServiceForm(srv);
-    setIsAddingNewService(false);
-  };
 
-  const handleAddNewServiceClick = () => {
-    setIsAddingNewService(true);
-    setEditingServiceId(null);
-    setServiceForm({
-      id: "srv-" + Date.now(),
-      title: "New Custom Service",
-      price: "Rs 1,500 – 4,500",
-      description: "Quick summary of this security or networking solution description.",
-      fullDescription: "Detailed breakdown explaining scope specifications, deployment guides, hardware standards, calibrations, and warranty parameters.",
-      iconName: "Shield",
-      hot: false,
-      imageUrl: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80"
-    });
-  };
-
-  const handleSaveService = () => {
-    if (!serviceForm.title) {
-      alert("Title field is mandatory.");
-      return;
-    }
-
-    if (isAddingNewService) {
-      const updated = [...services, serviceForm as Service];
-      saveServicesToStorage(updated);
-      setIsAddingNewService(false);
-    } else if (editingServiceId) {
-      const updated = services.map(s => s.id === editingServiceId ? { ...s, ...serviceForm } as Service : s);
-      saveServicesToStorage(updated);
-      setEditingServiceId(null);
-    }
-    setServiceForm({
-      title: "",
-      price: "",
-      description: "",
-      fullDescription: "",
-      iconName: "Shield",
-      hot: false,
-      imageUrl: ""
-    });
-  };
-
-  const handleDeleteService = (id: string) => {
-    if (confirm("Are you sure you want to permanently delete this service options?")) {
-      const updated = services.filter(s => s.id !== id);
-      saveServicesToStorage(updated);
-    }
-  };
-
-  // Settings downloader
-  const handleExportData = () => {
-    const backupObj = {
-      services,
-      contactInfo,
-      heroInfo,
-      aboutInfo,
-      benefits,
-      stats,
-      exportedAt: new Date().toISOString()
-    };
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", "coreguard_backup_database.json");
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-  };
 
   if (loading) {
     return (
@@ -622,30 +425,6 @@ export default function App() {
     <div className="min-h-screen bg-slate-50 font-sans text-slate-850 overflow-x-hidden selection:bg-orange-100 selection:text-slate-900 relative">
       <CustomCursor />
       
-      {/* FLOATING ACTION OVERLAY FOR ACTIVE ADMINS */}
-      {isLoggedIn && (
-        <div className="bg-amber-500 text-slate-950 px-4 py-2 text-xs font-semibold flex items-center justify-between shadow-md relative z-50 animate-in slide-in-from-top duration-300">
-          <div className="flex items-center gap-2">
-            <span className="p-1 bg-amber-600 text-white rounded font-mono text-[9px] font-bold">MODE: ACTIVE ADMIN</span>
-            <span>You are authenticated as an administrator. Access panel via <a href="/adminlogin" onClick={navigateToAdmin} className="underline font-bold">/adminlogin</a>.</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => setShowAdminPanel(true)}
-              className="bg-slate-900 text-white px-2.5 py-1 rounded hover:bg-slate-800 transition-colors text-[11px] font-mono font-bold"
-            >
-              Management Panel
-            </button>
-            <button 
-              onClick={handleAdminLogout}
-              className="text-slate-950 font-bold underline text-[11px]"
-            >
-              Sign Out
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* INTERACTIVE SOPHIA CHATBOT ASSISTANT */}
       <SophiaChat />
 
@@ -672,9 +451,6 @@ export default function App() {
         onNavigate={navigateTo}
         contactPhone={contactInfo.phone}
         onTriggerQuote={(srvId) => triggerQuote(srvId)}
-        isLoggedIn={isLoggedIn}
-        onShowAdmin={() => setShowAdminPanel(true)}
-        onLogout={handleAdminLogout}
       />
 
       {/* CONDITIONAL MAIN CONTENT DISPLAY */}
@@ -838,10 +614,7 @@ export default function App() {
             <div className="bg-white border border-slate-200/70 rounded-2xl p-7 text-left relative overflow-hidden group hover:shadow-[0_20px_40px_rgba(217,91,22,0.05)] hover:border-orange-200/50 hover:-translate-y-1 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
               {/* Dynamic decorative hover bar */}
               <div className="absolute top-0 inset-x-0 h-[3px] bg-transparent group-hover:bg-gradient-to-r group-hover:from-[#D95B16] group-hover:to-orange-500 rounded-t-2xl transition-all duration-300" />
-              <div className="p-3.5 bg-orange-50 text-[#D95B16] rounded-xl inline-block mb-4.5 shadow-sm group-hover:scale-105 group-hover:shadow-[0_4px_12px_rgba(217,91,22,0.15)] transition-all duration-300">
-                <Camera size={20} className="group-hover:rotate-6 transition-transform duration-300" />
-              </div>
-              <h3 className="font-display font-bold text-lg text-slate-900 mb-2">Secure Surveillance</h3>
+              <h3 className="font-display font-bold text-lg text-slate-900 mb-2 mt-2">Secure Surveillance</h3>
               <p className="text-slate-500 text-xs leading-relaxed">
                 Professional 4K IP camera setups with advanced neural motion triggers, infrared night-vision, and encrypted smartphone live feeds.
               </p>
@@ -850,10 +623,7 @@ export default function App() {
             <div className="bg-white border border-slate-200/70 rounded-2xl p-7 text-left relative overflow-hidden group hover:shadow-[0_20px_40px_rgba(217,91,22,0.05)] hover:border-orange-200/50 hover:-translate-y-1 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
               {/* Dynamic decorative hover bar */}
               <div className="absolute top-0 inset-x-0 h-[3px] bg-transparent group-hover:bg-gradient-to-r group-hover:from-[#D95B16] group-hover:to-orange-500 rounded-t-2xl transition-all duration-300" />
-              <div className="p-3.5 bg-orange-50 text-[#D95B16] rounded-xl inline-block mb-4.5 shadow-sm group-hover:scale-105 group-hover:shadow-[0_4px_12px_rgba(217,91,22,0.15)] transition-all duration-300">
-                <Layers size={20} className="group-hover:rotate-6 transition-transform duration-300" />
-              </div>
-              <h3 className="font-display font-bold text-lg text-slate-900 mb-2">Fiber Optic Splicing</h3>
+              <h3 className="font-display font-bold text-lg text-slate-900 mb-2 mt-2">Fiber Optic Splicing</h3>
               <p className="text-slate-500 text-xs leading-relaxed">
                 Core-alignment fusion splicing, OTDR optical distance mapping, and precise ribbon terminations to achieve micro-decibel loss ratings.
               </p>
@@ -862,10 +632,7 @@ export default function App() {
             <div className="bg-white border border-slate-200/70 rounded-2xl p-7 text-left relative overflow-hidden group hover:shadow-[0_20px_40px_rgba(217,91,22,0.05)] hover:border-orange-200/50 hover:-translate-y-1 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
               {/* Dynamic decorative hover bar */}
               <div className="absolute top-0 inset-x-0 h-[3px] bg-transparent group-hover:bg-gradient-to-r group-hover:from-[#D95B16] group-hover:to-orange-500 rounded-t-2xl transition-all duration-300" />
-              <div className="p-3.5 bg-orange-50 text-[#D95B16] rounded-xl inline-block mb-4.5 shadow-sm group-hover:scale-105 group-hover:shadow-[0_4px_12px_rgba(217,91,22,0.15)] transition-all duration-300">
-                <Shield size={20} className="group-hover:rotate-6 transition-transform duration-300" />
-              </div>
-              <h3 className="font-display font-bold text-lg text-slate-900 mb-2">Network Infrastructure</h3>
+              <h3 className="font-display font-bold text-lg text-slate-900 mb-2 mt-2">Network Infrastructure</h3>
               <p className="text-slate-500 text-xs leading-relaxed">
                 Gigabit Cat6 modular structured cabling layouts, custom hardware routing, and enterprise firewall setup for seamless bandwidth coverage.
               </p>
@@ -1038,15 +805,10 @@ export default function App() {
             {benefits.map((b) => (
               <div 
                 key={b.id}
-                className="bg-white border border-slate-200/60 hover:border-orange-300 p-6 rounded-2xl flex gap-4 text-left hover:bg-white hover:shadow-[0_12px_36px_rgba(217,91,22,0.06)] transition-all duration-300 relative group"
+                className="bg-white border border-slate-200/60 hover:border-orange-300 p-6 rounded-2xl text-left hover:bg-white hover:shadow-[0_12px_36px_rgba(217,91,22,0.06)] transition-all duration-300 relative group"
               >
                 {/* Visual Accent point */}
                 <div className="absolute top-4 right-4 h-1.5 w-1.5 rounded-full bg-[#D95B16] opacity-0 group-hover:opacity-100 transition-opacity" />
-                
-                {/* Icon in clean backing */}
-                <div className="p-3 bg-white border border-slate-200 text-[#D95B16] rounded-xl shrink-0 h-fit shadow-xs">
-                  <LucideIcon name={b.iconName} size={20} />
-                </div>
                 
                 {/* Context copy */}
                 <div>
@@ -1422,8 +1184,6 @@ export default function App() {
           <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-medium mt-8">
             <span>Copyright © 2026 CoreGuard Technology Services Company. All Rights Reserved.</span>
             <div className="flex gap-4 font-mono text-[9px] uppercase tracking-wider items-center">
-              <a href="/adminlogin" onClick={navigateToAdmin} className="hover:text-[#D95B16] cursor-pointer">Admin Access</a>
-              <span>•</span>
               <span className="hover:text-[#D95B16] cursor-pointer">Terms</span>
               <span>•</span>
               <span className="hover:text-[#D95B16] cursor-pointer">Privacy Protocol</span>
@@ -1432,683 +1192,6 @@ export default function App() {
 
         </div>
       </footer>
-
-      {/* ADMINISTRATIVE LOGIN POPUP */}
-      {showLoginModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onClick={clearAdminRoute} />
-          
-          <div className="relative w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-2xl p-6 sm:p-8 animate-in fade-in zoom-in-95 duration-200 text-slate-800">
-            <button 
-              onClick={clearAdminRoute}
-              className="absolute top-4 right-4 text-slate-450 hover:text-slate-800 p-1 bg-slate-50 border border-slate-150 rounded-full cursor-pointer"
-            >
-              <X size={16} />
-            </button>
-
-            <div className="text-center mb-6">
-              <div className="mx-auto mb-3 h-12 w-12 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center">
-                <Lock size={22} className="animate-pulse" />
-              </div>
-              <h3 className="font-display font-bold text-2xl text-slate-900">Administration Portal</h3>
-              <p className="text-[10px] uppercase tracking-wider font-mono text-indigo-600 font-bold mt-1">Authorized Operations Only</p>
-            </div>
-
-            {/* Quick credentials helper banner - very user friendly! */}
-            <div className="bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded-xl p-3 mb-5 leading-relaxed text-left">
-              <span className="font-bold">Credential Configs:</span>
-              <p className="mt-0.5">Use email <code className="bg-amber-100 rounded px-1 text-[11px] font-bold">admin@coreguard.com</code> and password <code className="bg-amber-100 rounded px-1 text-[11px] font-bold">admin</code> to log in. You can change these details in the panel setting.</p>
-            </div>
-
-            <form onSubmit={handleAdminVerify} className="space-y-4 text-left">
-              {loginError && (
-                <div className="bg-red-50 border border-red-250 text-red-750 p-3 rounded-lg text-xs font-semibold">
-                  {loginError}
-                </div>
-              )}
-
-              <div>
-                <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 font-bold mb-1.5">
-                  Email ID
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                  placeholder="admin@coreguard.com"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 font-bold mb-1.5">
-                  Secret Key
-                </label>
-                <input
-                  type="password"
-                  required
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-750 text-white font-bold py-2.5 rounded-lg transition-all shadow-md shadow-indigo-600/10 cursor-pointer text-sm font-sans"
-              >
-                Establish Secure Session
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* MASTER INTUITIVE ADMINISTRATIVE OVERLAY WORKSPACE */}
-      {showAdminPanel && isLoggedIn && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onClick={clearAdminRoute} />
-          
-          <div className="relative w-full max-w-4xl h-[85vh] bg-white border border-slate-200 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-800 animate-in fade-in zoom-in-95 duration-200">
-            
-            {/* Header Area */}
-            <div className="bg-slate-900 text-white p-5 flex items-center justify-between border-b border-slate-850 shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="p-1.5 bg-slate-800 text-indigo-400 rounded-lg border border-slate-700">
-                  <Shield size={22} />
-                </div>
-                <div className="text-left">
-                  <h3 className="font-display font-medium text-lg text-white">Dynamic Content Customizer</h3>
-                  <p className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-black">Authorized Active Session • CoreGuard DB</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2.5">
-                <button 
-                  onClick={handleExportData}
-                  className="bg-slate-800 hover:bg-slate-750 text-slate-300 py-1.5 px-3 rounded-lg text-xs font-mono font-bold flex items-center gap-1 cursor-pointer"
-                  title="Download current database configuration backup"
-                >
-                  <FileDown size={14} /> Export Backup
-                </button>
-                <button 
-                  onClick={handleResetToDefaults}
-                  className="bg-slate-800 hover:bg-slate-750 text-amber-400 py-1.5 px-3 rounded-lg text-xs font-mono font-bold flex items-center gap-1 cursor-pointer"
-                  title="Reset database variables to factory pre-sets"
-                >
-                  <RotateCcw size={14} /> Clear DB
-                </button>
-                <button 
-                  onClick={clearAdminRoute}
-                  className="p-1 bg-slate-800 rounded-full text-slate-400 hover:text-white border border-slate-700 cursor-pointer"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-            </div>
-
-            {/* Inner Dashboard Layout */}
-            <div className="flex flex-1 overflow-hidden">
-              
-              {/* Dashboard Side navigation */}
-              <div className="w-56 bg-slate-50 border-r border-slate-200 p-4.5 space-y-2 text-left hidden sm:block shrink-0">
-                <span className="block text-[8px] font-mono text-slate-400 uppercase tracking-widest font-black mb-3">WORKSPACE ENTITIES</span>
-                
-                <button 
-                  onClick={() => setActiveAdminTab("services")}
-                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2.5 transition-colors cursor-pointer ${activeAdminTab === "services" ? "bg-indigo-600 text-white shadow-sm" : "text-slate-650 hover:bg-slate-200/50"}`}
-                >
-                  <Layers size={14} /> Dynamic Services ({services.length})
-                </button>
-                <button 
-                  onClick={() => setActiveAdminTab("contact")}
-                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2.5 transition-colors cursor-pointer ${activeAdminTab === "contact" ? "bg-indigo-600 text-white shadow-sm" : "text-slate-650 hover:bg-slate-200/50"}`}
-                >
-                  <Phone size={14} /> Contact Details
-                </button>
-                <button 
-                  onClick={() => setActiveAdminTab("content")}
-                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2.5 transition-colors cursor-pointer ${activeAdminTab === "content" ? "bg-indigo-600 text-white shadow-sm" : "text-slate-650 hover:bg-slate-200/50"}`}
-                >
-                  <Edit size={14} /> Hero & About Content
-                </button>
-                <button 
-                  onClick={() => setActiveAdminTab("security")}
-                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2.5 transition-colors cursor-pointer ${activeAdminTab === "security" ? "bg-indigo-600 text-white shadow-sm" : "text-slate-650 hover:bg-slate-200/50"}`}
-                >
-                  <Lock size={14} /> Admin Access Set
-                </button>
-
-                <div className="pt-24 text-[10px] text-slate-400 leading-relaxed font-mono">
-                  <span>Changes reflect instantly across the public interface upon clicking save blocks. Data keeps persistent.</span>
-                </div>
-              </div>
-
-              {/* Central Editing Pane */}
-              <div className="flex-1 p-6 overflow-y-auto text-left">
-                
-                {/* Fallback segment selector for smaller devices */}
-                <div className="flex sm:hidden overflow-x-auto gap-1 pb-4 mb-4 border-b border-slate-100 shrink-0 select-none">
-                  <button 
-                    onClick={() => setActiveAdminTab("services")}
-                    className={`px-3 py-1.5 rounded-full text-[11px] font-bold shrink-0 ${activeAdminTab === "services" ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-700"}`}
-                  >
-                    Services ({services.length})
-                  </button>
-                  <button 
-                    onClick={() => setActiveAdminTab("contact")}
-                    className={`px-3 py-1.5 rounded-full text-[11px] font-bold shrink-0 ${activeAdminTab === "contact" ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-700"}`}
-                  >
-                    Contacts
-                  </button>
-                  <button 
-                    onClick={() => setActiveAdminTab("content")}
-                    className={`px-3 py-1.5 rounded-full text-[11px] font-bold shrink-0 ${activeAdminTab === "content" ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-700"}`}
-                  >
-                    Headline Texts
-                  </button>
-                  <button 
-                    onClick={() => setActiveAdminTab("security")}
-                    className={`px-3 py-1.5 rounded-full text-[11px] font-bold shrink-0 ${activeAdminTab === "security" ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-700"}`}
-                  >
-                    Access Key
-                  </button>
-                </div>
-
-                {/* TAB 1: SERVICES CATALOG MANAGEMENT */}
-                {activeAdminTab === "services" && (
-                  <div className="space-y-6">
-                    <div className="flex justify-between items-center pb-2.5 border-b border-slate-100">
-                      <div>
-                        <h4 className="font-display font-bold text-lg text-slate-905">Dynamic Services Catalog</h4>
-                        <p className="text-xs text-slate-450 mt-0.5 text-slate-500">Edit values, prices, icons, cover photos, or upload custom hardware solutions.</p>
-                      </div>
-                      <button 
-                        onClick={handleAddNewServiceClick}
-                        className="bg-indigo-600 hover:bg-indigo-750 text-white flex items-center gap-1.5 py-1.5 px-3.5 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
-                      >
-                        <Plus size={14} /> Add New Service
-                      </button>
-                    </div>
-
-                    {/* Form for Editing or Adding a single service */}
-                    {(editingServiceId || isAddingNewService) && (
-                      <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-4 animate-in slide-in-from-top duration-200 relative">
-                        <button 
-                          onClick={() => { setEditingServiceId(null); setIsAddingNewService(false); }}
-                          className="absolute top-4 right-4 text-xs font-mono text-slate-450 hover:text-slate-800"
-                        >
-                          Cancel
-                        </button>
-                        <h5 className="font-display font-black text-sm text-indigo-700 uppercase tracking-wide">
-                          {isAddingNewService ? "New Service Configuration Parameters" : `Modify Service ID: ${editingServiceId}`}
-                        </h5>
-                        
-                        <div className="grid grid-cols-1 gap-4">
-                          <div>
-                            <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-500 font-bold mb-1">Service Title</label>
-                            <input 
-                              type="text" 
-                              value={serviceForm.title || ""} 
-                              onChange={(e) => setServiceForm({ ...serviceForm, title: e.target.value })}
-                              placeholder="e.g. CCTV HD Deployment"
-                              className="w-full bg-white border border-slate-250/70 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-500 font-bold mb-1">Cover Image custom Link</label>
-                            <input 
-                              type="text" 
-                              value={serviceForm.imageUrl || ""} 
-                              onChange={(e) => setServiceForm({ ...serviceForm, imageUrl: e.target.value })}
-                              placeholder="Unsplash URL or custom layout link"
-                              className="w-full bg-white border border-slate-250/70 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500 font-mono"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-500 font-bold mb-1">Icon Name (Lucide standard)</label>
-                            <select 
-                              value={serviceForm.iconName || "Shield"} 
-                              onChange={(e) => setServiceForm({ ...serviceForm, iconName: e.target.value })}
-                              className="w-full bg-white border border-slate-250/70 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500"
-                            >
-                              <option value="Camera">Camera (CCTV)</option>
-                              <option value="Cable">Cable (Fiber Trunk)</option>
-                              <option value="Network">Network (Enterprise Switch)</option>
-                              <option value="Wrench">Wrench (Diagnostics)</option>
-                              <option value="Activity">Activity (Reflectometer)</option>
-                              <option value="Fingerprint">Fingerprint (Biometrics)</option>
-                              <option value="Shuffle">Shuffle (Structured cabling)</option>
-                              <option value="Smartphone">Smartphone (DDNS App)</option>
-                              <option value="Layers">Layers (Calibration)</option>
-                              <option value="Lock">Lock (Access control)</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-500 font-bold mb-1">Quick Description (Grid display limit)</label>
-                          <input 
-                            type="text" 
-                            value={serviceForm.description || ""} 
-                            onChange={(e) => setServiceForm({ ...serviceForm, description: e.target.value })}
-                            placeholder="Brief 1-sentence descriptor for gallery cards lookup..."
-                            className="w-full bg-white border border-slate-250/70 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-500 font-bold mb-1">Extended full description (Detailed Modal lookup)</label>
-                          <textarea 
-                            rows={3}
-                            value={serviceForm.fullDescription || ""} 
-                            onChange={(e) => setServiceForm({ ...serviceForm, fullDescription: e.target.value })}
-                            placeholder="List physical wire thickness, DB signal limits, configurations warranty, hardware handshakes..."
-                            className="w-full bg-white border border-slate-250/70 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500 resize-none font-sans"
-                          />
-                        </div>
-
-                        <div className="flex items-center gap-3 pt-1">
-                          <label className="flex items-center gap-2 text-xs font-mono font-bold text-slate-700 select-none">
-                            <input 
-                              type="checkbox" 
-                              checked={serviceForm.hot || false}
-                              onChange={(e) => setServiceForm({ ...serviceForm, hot: e.target.checked })}
-                              className="h-4 w-4 text-indigo-600 border-slate-300 focus:ring-indigo-500 rounded"
-                            />
-                            Markup with 'Popular' tag highlight
-                          </label>
-                          <div className="ml-auto flex gap-2">
-                            <button 
-                              onClick={() => { setEditingServiceId(null); setIsAddingNewService(false); }}
-                              className="px-3 bg-white border border-slate-200 text-slate-650 text-xs py-1.5 rounded-lg hover:bg-slate-100 cursor-pointer"
-                            >
-                              Go Back
-                            </button>
-                            <button 
-                              onClick={handleSaveService}
-                              className="px-4.5 bg-indigo-600 text-white text-xs py-1.5 font-bold rounded-lg hover:bg-indigo-755 flex items-center gap-1 cursor-pointer"
-                            >
-                              <Save size={13} /> Save Change
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Table of active dynamic services */}
-                    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
-                      <table className="w-full text-left border-collapse text-xs">
-                        <thead>
-                          <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-mono text-[10px] font-bold">
-                            <th className="p-3">Solution / Service</th>
-                            <th className="p-3 hidden sm:table-cell font-mono text-[10px] font-bold">Lucide Icon</th>
-                            <th className="p-3 text-right">Operational Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-150 font-sans">
-                          {services.map(s => (
-                            <tr key={s.id} className="hover:bg-slate-50/50">
-                              <td className="p-3">
-                                <div className="flex items-center gap-3">
-                                  <img 
-                                    src={s.imageUrl} 
-                                    className="h-10 w-10 object-cover rounded-md border border-slate-200" 
-                                    alt="" 
-                                    referrerPolicy="no-referrer"
-                                  />
-                                  <div>
-                                    <span className="font-bold text-slate-900 block">{s.title}</span>
-                                    {s.hot && <span className="inline-block px-1.5 py-0.2 bg-amber-100 text-amber-800 text-[8px] font-bold uppercase tracking-widest rounded mt-0.5">Popular</span>}
-                                  </div>
-                                </div>
-                              </td>
-                              <td className="p-3 hidden sm:table-cell font-mono text-slate-500">{s.iconName}</td>
-                              <td className="p-3 text-right">
-                                <div className="inline-flex gap-2">
-                                  <button 
-                                    onClick={() => handleEditClick(s)}
-                                    className="p-1.5 bg-slate-50 text-slate-650 hover:text-indigo-600 rounded border border-slate-150 cursor-pointer"
-                                    title="Edit fields"
-                                  >
-                                    <Edit size={13} />
-                                  </button>
-                                  <button 
-                                    onClick={() => handleDeleteService(s.id)}
-                                    className="p-1.5 bg-slate-50 text-slate-650 hover:text-[#EF4444] rounded border border-slate-150 cursor-pointer"
-                                    title="Delete service node"
-                                  >
-                                    <Trash2 size={13} />
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-
-                {/* TAB 2: CONTACT DETAILS */}
-                {activeAdminTab === "contact" && (
-                  <div className="space-y-6">
-                    <div>
-                      <h4 className="font-display font-bold text-lg text-slate-900">Dynamic Contact Setup</h4>
-                      <p className="text-xs text-slate-500 mt-0.5">Alter support hotlines, corporate email routes, Islamabad office coordinates, and live node parameters.</p>
-                    </div>
-
-                    <form 
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        saveContactToStorage(contactInfo);
-                        alert("Contact properties compiled and locked successfully!");
-                      }} 
-                      className="space-y-5"
-                    >
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 font-bold mb-1.5">Dispatch Support Hotline</label>
-                          <input 
-                            type="text" 
-                            required
-                            value={contactInfo.phone}
-                            onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
-                            className="w-full bg-slate-50 border border-slate-250/70 rounded-lg px-3 py-2 text-xs focus:outline-none"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 font-bold mb-1.5">Official Mail Room</label>
-                          <input 
-                            type="email" 
-                            required
-                            value={contactInfo.email}
-                            onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
-                            className="w-full bg-slate-50 border border-slate-250/70 rounded-lg px-3 py-2 text-xs focus:outline-none font-mono"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 font-bold mb-1.5">HQ Office Address</label>
-                        <input 
-                          type="text" 
-                          required
-                          value={contactInfo.address}
-                          onChange={(e) => setContactInfo({ ...contactInfo, address: e.target.value })}
-                          className="w-full bg-slate-50 border border-slate-250/70 rounded-lg px-3 py-2 text-xs focus:outline-none"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 font-bold mb-1.5">Location Latitude Coordinate</label>
-                          <input 
-                            type="text" 
-                            required
-                            value={contactInfo.latitude}
-                            onChange={(e) => setContactInfo({ ...contactInfo, latitude: e.target.value })}
-                            className="w-full bg-slate-50 border border-slate-250/70 rounded-lg px-3 py-2 text-xs focus:outline-none font-mono"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 font-bold mb-1.5">Location Longitude Coordinate</label>
-                          <input 
-                            type="text" 
-                            required
-                            value={contactInfo.longitude}
-                            onChange={(e) => setContactInfo({ ...contactInfo, longitude: e.target.value })}
-                            className="w-full bg-slate-50 border border-slate-250/70 rounded-lg px-3 py-2 text-xs focus:outline-none font-mono"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="pt-2">
-                        <button 
-                          type="submit"
-                          className="px-5 bg-indigo-600 text-white font-bold py-2 rounded-lg text-xs hover:bg-indigo-750 inline-flex items-center gap-1.5 cursor-pointer shadow-sm"
-                        >
-                          <Save size={13} /> Commit Contact Profiles
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                )}
-
-                {/* TAB 3: CONTENT MANAGEMENTS (Hero, Headline, Descs) */}
-                {activeAdminTab === "content" && (
-                  <div className="space-y-6">
-                    <div>
-                      <h4 className="font-display font-bold text-lg text-slate-900">Dynamic Text Configuration</h4>
-                      <p className="text-xs text-slate-500 mt-0.5">Customize hero marketing statements and technical parameters of the about division instantly.</p>
-                    </div>
-
-                    <div className="space-y-6">
-                      
-                      {/* Hero Section settings form */}
-                      <form 
-                        onSubmit={(e) => {
-                          e.preventDefault();
-                          saveHeroToStorage(heroInfo);
-                          alert("Hero statements committed and saved!");
-                        }}
-                        className="bg-slate-50/50 border border-slate-200/80 rounded-2xl p-5 space-y-4"
-                      >
-                        <h5 className="font-sans font-bold text-xs uppercase tracking-widest text-[#EF4444] border-b border-slate-200 pb-2">1. Hero Splash Headers</h5>
-                        
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-xs font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">Headline Part 1</label>
-                            <input 
-                              type="text" 
-                              required
-                              value={heroInfo.title1}
-                              onChange={(e) => setHeroInfo({ ...heroInfo, title1: e.target.value })}
-                              className="w-full bg-white border border-slate-250/70 rounded-md px-3 py-1.5 text-xs focus:outline-none"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">Headline Connector (italic)</label>
-                            <input 
-                              type="text" 
-                              required
-                              value={heroInfo.title2}
-                              onChange={(e) => setHeroInfo({ ...heroInfo, title2: e.target.value })}
-                              className="w-full bg-white border border-slate-250/70 rounded-md px-3 py-1.5 text-xs focus:outline-none"
-                            />
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-xs font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">Primary Accented Highlight Word</label>
-                          <input 
-                            type="text" 
-                            required
-                            value={heroInfo.highlightText}
-                            onChange={(e) => setHeroInfo({ ...heroInfo, highlightText: e.target.value })}
-                            className="w-full bg-white border border-slate-250/70 rounded-md px-3 py-1.5 text-xs focus:outline-none font-bold text-indigo-600"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-xs font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">Hero Tagline text (Paragraph description)</label>
-                          <textarea 
-                            rows={2}
-                            required
-                            value={heroInfo.tagline}
-                            onChange={(e) => setHeroInfo({ ...heroInfo, tagline: e.target.value })}
-                            className="w-full bg-white border border-slate-250/70 rounded-md px-3 py-1.5 text-xs focus:outline-none resize-none font-sans"
-                          />
-                        </div>
-
-                        <div className="pt-1">
-                          <button 
-                            type="submit"
-                            className="px-4 bg-indigo-600 text-white font-bold py-1.5 rounded-lg text-xs hover:bg-indigo-750 inline-flex items-center gap-1 cursor-pointer shadow-sm"
-                          >
-                            <Save size={12} /> Sync Hero Splash
-                          </button>
-                        </div>
-                      </form>
-
-                      {/* About Division details form */}
-                      <form 
-                        onSubmit={(e) => {
-                          e.preventDefault();
-                          saveAboutToStorage(aboutInfo);
-                          alert("About page statements saved successfully!");
-                        }}
-                        className="bg-slate-50/50 border border-slate-200/80 rounded-2xl p-5 space-y-4"
-                      >
-                        <h5 className="font-sans font-bold text-xs uppercase tracking-widest text-[#EF4444] border-b border-slate-200 pb-2">2. About Division Credentials</h5>
-                        
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-xs font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">Top Category Tag</label>
-                            <input 
-                              type="text" 
-                              required
-                              value={aboutInfo.title}
-                              onChange={(e) => setAboutInfo({ ...aboutInfo, title: e.target.value })}
-                              className="w-full bg-white border border-slate-250/70 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">Accented Subline Slogan</label>
-                            <input 
-                              type="text" 
-                              required
-                              value={aboutInfo.tagline}
-                              onChange={(e) => setAboutInfo({ ...aboutInfo, tagline: e.target.value })}
-                              className="w-full bg-white border border-slate-250/70 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500 font-bold text-[#EF4444]"
-                            />
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-xs font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">Main About Section Title Headline</label>
-                          <input 
-                            type="text" 
-                            required
-                            value={aboutInfo.headline}
-                            onChange={(e) => setAboutInfo({ ...aboutInfo, headline: e.target.value })}
-                            className="w-full bg-white border border-slate-250/70 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-xs font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">First paragraph overview (Core capabilities)</label>
-                          <textarea 
-                            rows={3}
-                            required
-                            value={aboutInfo.description1}
-                            onChange={(e) => setAboutInfo({ ...aboutInfo, description1: e.target.value })}
-                            className="w-full bg-white border border-slate-250/70 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500 resize-none font-sans"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-xs font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">Second paragraph overview (Inclusions warranting)</label>
-                          <textarea 
-                            rows={2}
-                            required
-                            value={aboutInfo.description2}
-                            onChange={(e) => setAboutInfo({ ...aboutInfo, description2: e.target.value })}
-                            className="w-full bg-white border border-slate-250/70 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500 resize-none font-sans"
-                          />
-                        </div>
-
-                        <div className="pt-1">
-                          <button 
-                            type="submit"
-                            className="px-4 bg-indigo-600 text-white font-bold py-1.5 rounded-lg text-xs hover:bg-indigo-755 inline-flex items-center gap-1 cursor-pointer shadow-sm"
-                          >
-                            <Save size={12} /> Sync About Credentials
-                          </button>
-                        </div>
-                      </form>
-
-                    </div>
-                  </div>
-                )}
-
-                {/* TAB 4: ACCESS CREDENTIALS CONFIGURATIONS */}
-                {activeAdminTab === "security" && (
-                  <div className="space-y-6">
-                    <div>
-                      <h4 className="font-display font-bold text-lg text-slate-900">Change Admin Access Credentials</h4>
-                      <p className="text-xs text-slate-500 mt-0.5">Customize your authorized email and security password for accessing the workspace customizer.</p>
-                    </div>
-
-                    <form 
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        const emailInput = (e.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
-                        const passInput = (e.currentTarget.elements.namedItem("password") as HTMLInputElement).value;
-                        
-                        if (emailInput.trim().length < 5 || passInput.trim().length < 4) {
-                          alert("Email must be at least 5 letters and password at least 4 letters.");
-                          return;
-                        }
-
-                        localStorage.setItem("coreguard_admin_email", emailInput.trim());
-                        localStorage.setItem("coreguard_admin_password", passInput.trim());
-                        alert("Administrative credentials saved successfully! Use them on your next login prompt.");
-                      }}
-                      className="space-y-4 max-w-md bg-slate-50 border border-slate-200/80 rounded-2xl p-5"
-                    >
-                      <div>
-                        <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 font-bold mb-1.5">Configure Admin Email ID</label>
-                        <input 
-                          type="email" 
-                          name="email"
-                          required
-                          defaultValue={localStorage.getItem("coreguard_admin_email") || "admin@coreguard.com"}
-                          className="w-full bg-white border border-slate-250/70 rounded-lg px-3 py-2 text-xs focus:outline-none"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 font-bold mb-1.5">Configure Administrative Password</label>
-                        <input 
-                          type="text" 
-                          name="password"
-                          required
-                          defaultValue={localStorage.getItem("coreguard_admin_password") || "admin"}
-                          className="w-full bg-white border border-slate-250/70 rounded-lg px-3 py-2 text-xs focus:outline-none font-mono font-bold"
-                        />
-                      </div>
-
-                      <div className="pt-2">
-                        <button 
-                          type="submit"
-                          className="px-5 bg-indigo-600 text-white font-bold py-2 rounded-lg text-xs hover:bg-indigo-750 inline-flex items-center gap-1.5 cursor-pointer shadow-sm"
-                        >
-                          <Save size={13} /> Update Access Details
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                )}
-
-              </div>
-
-            </div>
-
-            {/* Bottom bar inside panel */}
-            <div className="bg-slate-50 p-4 border-t border-slate-200 text-center text-[11px] text-slate-400 font-mono shrink-0">
-              Workspace sync engine active. Change parameters reactively. Made for CoreGuard administration.
-            </div>
-
-          </div>
-        </div>
-      )}
-
       {/* ESTIMATE QUOTE TRIGGER OVERLAY */}
       <QuoteDialog 
         isOpen={quoteDialogOpen}

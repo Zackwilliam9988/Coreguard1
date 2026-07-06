@@ -29,9 +29,10 @@ interface Message {
 
 export const SophiaChat: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [step, setStep] = useState<"phone" | "email" | "service" | "completed">("phone");
+  const [step, setStep] = useState<"name" | "email" | "phone" | "service" | "completed">("name");
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputVal, setInputVal] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -52,7 +53,7 @@ export const SophiaChat: React.FC = () => {
             {
               id: "msg-welcome",
               sender: "bot",
-              text: "Aslamoalikum this is Sophia Your AI help agent Please provide your phone number"
+              text: "Aslamoalikum this is Sophia Your AI help agent Please provide your full name"
             }
           ]);
           setIsTyping(false);
@@ -70,13 +71,13 @@ export const SophiaChat: React.FC = () => {
   }, [messages, isTyping]);
 
   // Secure data submission
-  const submitData = (phoneValue: string, emailValue: string, selectedServiceTitle: string, isFinal: boolean = true) => {
+  const submitData = (nameValue: string, phoneValue: string, emailValue: string, selectedServiceTitle: string, isFinal: boolean = true) => {
     if (isFinal) {
       setIsSubmitting(true);
       setIsTyping(true);
     }
 
-    const encodedName = encodeURIComponent("Sophia Chatbot Agent");
+    const encodedName = encodeURIComponent(nameValue || name || "Sophia Chatbot Agent");
     const encodedPhone = encodeURIComponent(phoneValue);
     const encodedEmail = encodeURIComponent(emailValue);
     const encodedService = encodeURIComponent(selectedServiceTitle);
@@ -114,26 +115,23 @@ export const SophiaChat: React.FC = () => {
     });
   };
 
-  // Handle phone submission
-  const processPhoneInput = (val: string) => {
+  // Handle name submission
+  const processNameInput = (val: string) => {
     setErrorText("");
     const trimmed = val.trim();
     if (!trimmed) return;
-
-    // Standard phone validation regex
-    const phoneRegex = /^[0-9+\-\s()]{7,18}$/;
-    if (!phoneRegex.test(trimmed)) {
-      setErrorText("Please enter a valid phone number.");
+    if (trimmed.length < 2) {
+      setErrorText("Please enter a valid name.");
       return;
     }
 
-    setPhone(trimmed);
+    setName(trimmed);
     setInputVal("");
 
-    // Add user's phone message
+    // Add user's name message
     setMessages(prev => [
       ...prev,
-      { id: `user-phone-${Date.now()}`, sender: "user", text: trimmed }
+      { id: `user-name-${Date.now()}`, sender: "user", text: trimmed }
     ]);
 
     // Bot responds and requests email
@@ -144,7 +142,7 @@ export const SophiaChat: React.FC = () => {
         {
           id: `bot-email-select-${Date.now()}`,
           sender: "bot",
-          text: "Thank you! Please also provide your email address for direct technical document transmission:"
+          text: `Thank you, ${trimmed}! Please provide your email address for direct technical document transmission (second step):`
         }
       ]);
       setStep("email");
@@ -174,8 +172,46 @@ export const SophiaChat: React.FC = () => {
       { id: `user-email-${Date.now()}`, sender: "user", text: trimmed }
     ]);
 
+    // Bot responds and requests phone
+    setIsTyping(true);
+    setTimeout(() => {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: `bot-phone-select-${Date.now()}`,
+          sender: "bot",
+          text: "Perfect! Now please provide your phone number so a site inspector can coordinate with you:"
+        }
+      ]);
+      setStep("phone");
+      setIsTyping(false);
+    }, 1000);
+  };
+
+  // Handle phone submission
+  const processPhoneInput = (val: string) => {
+    setErrorText("");
+    const trimmed = val.trim();
+    if (!trimmed) return;
+
+    // Standard phone validation regex
+    const phoneRegex = /^[0-9+\-\s()]{7,18}$/;
+    if (!phoneRegex.test(trimmed)) {
+      setErrorText("Please enter a valid phone number.");
+      return;
+    }
+
+    setPhone(trimmed);
+    setInputVal("");
+
+    // Add user's phone message
+    setMessages(prev => [
+      ...prev,
+      { id: `user-phone-${Date.now()}`, sender: "user", text: trimmed }
+    ]);
+
     // IMMEDIATE background submission (handles client skipping further selections)
-    submitData(phone, trimmed, "None / Just Callback", false);
+    submitData(name, trimmed, email, "None / Just Callback", false);
 
     // Bot responds and requests service
     setIsTyping(true);
@@ -185,7 +221,7 @@ export const SophiaChat: React.FC = () => {
         {
           id: `bot-service-select-${Date.now()}`,
           sender: "bot",
-          text: "Perfect! I have registered your email. To speed up your response, please select the service you are interested in below, or close this chat if you just need a general callback:",
+          text: "Excellent! I have registered your phone number. To speed up your response, please select the service you are interested in below, or close this chat if you just need a general callback:",
           isServiceSelector: true
         }
       ]);
@@ -196,10 +232,12 @@ export const SophiaChat: React.FC = () => {
 
   const handleSendForm = (e: React.FormEvent) => {
     e.preventDefault();
-    if (step === "phone") {
-      processPhoneInput(inputVal);
+    if (step === "name") {
+      processNameInput(inputVal);
     } else if (step === "email") {
       processEmailInput(inputVal);
+    } else if (step === "phone") {
+      processPhoneInput(inputVal);
     }
   };
 
@@ -208,7 +246,7 @@ export const SophiaChat: React.FC = () => {
       ...prev,
       { id: `user-srv-${Date.now()}`, sender: "user", text: `I am interested in ${serviceTitle}` }
     ]);
-    submitData(phone, email, serviceTitle, true);
+    submitData(name, phone, email, serviceTitle, true);
   };
 
   // Quick Questions handlers
@@ -238,12 +276,14 @@ export const SophiaChat: React.FC = () => {
       ]);
       setIsTyping(false);
 
-      if (step === "phone" || step === "email") {
+      if (step === "name" || step === "email" || step === "phone") {
         setTimeout(() => {
           setIsTyping(true);
-          const reminderMsg = step === "email" 
-            ? "Please enter your email address below so we can send you documentation!"
-            : "Please enter your phone number below so we can schedule a quick callback!";
+          const reminderMsg = step === "name"
+            ? "Please enter your full name below so I can address you!"
+            : step === "email"
+              ? "Please enter your email address below so we can send you documentation!"
+              : "Please enter your phone number below so we can schedule a quick callback!";
           setMessages(prev => [
             ...prev,
             { id: `uq-remind-${Date.now()}`, sender: "bot", text: reminderMsg }
@@ -255,9 +295,10 @@ export const SophiaChat: React.FC = () => {
   };
 
   const handleReset = () => {
+    setName("");
     setPhone("");
     setEmail("");
-    setStep("phone");
+    setStep("name");
     setMessages([]);
     setInputVal("");
     setErrorText("");
@@ -267,7 +308,7 @@ export const SophiaChat: React.FC = () => {
         {
           id: "msg-welcome-re",
           sender: "bot",
-          text: "Aslamoalikum this is Sophia Your AI help agent Please provide your phone number"
+          text: "Aslamoalikum this is Sophia Your AI help agent Please provide your full name"
         }
       ]);
       setIsTyping(false);
@@ -403,8 +444,8 @@ export const SophiaChat: React.FC = () => {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Quick Assistant Pills Area - Floating cleanly above input, only in phone step */}
-              {step === "phone" && (
+              {/* Quick Assistant Pills Area - Floating cleanly above input, only in name/email/phone step */}
+              {(step === "name" || step === "email" || step === "phone") && (
                 <div className="px-4 py-2 border-t border-slate-100 bg-slate-50 flex flex-col gap-1.5">
                   <span className="text-[9px] font-mono uppercase text-slate-400 tracking-wider font-extrabold text-left flex items-center gap-1">
                     <Sparkles size={10} className="text-[#D95B16]" />
@@ -412,17 +453,17 @@ export const SophiaChat: React.FC = () => {
                   </span>
                   <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
                     <button
-                      type="button"
-                      onClick={() => handleQuickQuestion("cabling")}
-                      className="shrink-0 bg-white hover:bg-orange-50/50 border border-slate-200 hover:border-orange-200 text-slate-600 hover:text-[#D95B16] px-3 py-1.5 rounded-full text-[10.5px] font-medium transition-all duration-200 cursor-pointer flex items-center gap-1 active:scale-95"
+                       type="button"
+                       onClick={() => handleQuickQuestion("cabling")}
+                       className="shrink-0 bg-white hover:bg-orange-50/50 border border-slate-200 hover:border-orange-200 text-slate-600 hover:text-[#D95B16] px-3 py-1.5 rounded-full text-[10.5px] font-medium transition-all duration-200 cursor-pointer flex items-center gap-1 active:scale-95"
                     >
                       <HelpCircle size={11} className="text-[#D95B16]" />
                       <span>Cat6 vs Cat5e</span>
                     </button>
                     <button
-                      type="button"
-                      onClick={() => handleQuickQuestion("splitters")}
-                      className="shrink-0 bg-white hover:bg-orange-50/50 border border-slate-200 hover:border-orange-200 text-slate-600 hover:text-[#D95B16] px-3 py-1.5 rounded-full text-[10.5px] font-medium transition-all duration-200 cursor-pointer flex items-center gap-1 active:scale-95"
+                       type="button"
+                       onClick={() => handleQuickQuestion("splitters")}
+                       className="shrink-0 bg-white hover:bg-orange-50/50 border border-slate-200 hover:border-orange-200 text-slate-600 hover:text-[#D95B16] px-3 py-1.5 rounded-full text-[10.5px] font-medium transition-all duration-200 cursor-pointer flex items-center gap-1 active:scale-95"
                     >
                       <HelpCircle size={11} className="text-[#D95B16]" />
                       <span>Optical Splitters</span>
@@ -441,18 +482,26 @@ export const SophiaChat: React.FC = () => {
 
               {/* Form Input Container */}
               <div className="p-4 border-t border-slate-100 bg-slate-50">
-                {(step === "phone" || step === "email") ? (
+                {(step === "name" || step === "email" || step === "phone") ? (
                   <form onSubmit={handleSendForm} className="flex gap-2">
                     <div className="relative flex-1">
                       <input
-                        type={step === "email" ? "email" : "tel"}
+                        type={step === "email" ? "email" : "text"}
                         required
-                        placeholder={step === "email" ? "Type email + hit Enter..." : "Type phone number + hit Enter..."}
+                        placeholder={
+                          step === "name"
+                            ? "Type your full name + hit Enter..."
+                            : step === "email"
+                              ? "Type email + hit Enter (second option)..."
+                              : "Type phone number + hit Enter..."
+                        }
                         value={inputVal}
                         onChange={(e) => setInputVal(e.target.value)}
                         className="w-full bg-white border border-slate-200 focus:border-[#D95B16] focus:ring-1 focus:ring-[#D95B16]/30 rounded-xl pl-9 pr-3 py-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition-all font-semibold"
                       />
-                      {step === "email" ? (
+                      {step === "name" ? (
+                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={13} />
+                      ) : step === "email" ? (
                         <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={13} />
                       ) : (
                         <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={13} />

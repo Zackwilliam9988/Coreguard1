@@ -282,7 +282,6 @@ export const WhyUsPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {corporateBenefits.map((b, idx) => {
-              const Icon = b.icon;
               return (
                 <motion.div 
                   key={idx}
@@ -294,11 +293,7 @@ export const WhyUsPage: React.FC = () => {
                 >
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-orange-500/2 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none" />
                   
-                  <div className="h-10 w-10 bg-orange-50 border border-orange-100 rounded-xl flex items-center justify-center text-[#D95B16] group-hover:border-[#D95B16]/40 transition-colors mb-5">
-                    <Icon size={20} />
-                  </div>
-                  
-                  <h3 className="text-lg font-black font-sans text-slate-900 mb-2 tracking-tight group-hover:text-[#D95B16] transition-colors">
+                  <h3 className="text-lg font-black font-sans text-slate-900 mb-2 mt-2 tracking-tight group-hover:text-[#D95B16] transition-colors">
                     {b.title}
                   </h3>
                   

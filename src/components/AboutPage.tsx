@@ -107,10 +107,7 @@ export const AboutPage: React.FC = () => {
             className="bg-white border border-slate-100 rounded-3xl p-8 relative overflow-hidden group shadow-md hover:shadow-lg transition-all duration-300"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 blur-2xl pointer-events-none" />
-            <div className="h-12 w-12 bg-[#D95B16]/10 rounded-2xl flex items-center justify-center text-[#D95B16] mb-6 border border-[#D95B16]/20">
-              <Target size={24} />
-            </div>
-            <h3 className="text-2xl font-black font-sans mb-4 tracking-tight text-slate-900">Our Mission</h3>
+            <h3 className="text-2xl font-black font-sans mb-4 tracking-tight text-slate-900 mt-2">Our Mission</h3>
             <p className="text-slate-600 text-sm leading-relaxed font-sans">
               To engineer and maintain bulletproof security grids, high-speed networking paths, and automated bio-tracking modules that guarantee commercial clients continuous uptime, maximum asset protection, and streamlined oversight.
             </p>
@@ -124,10 +121,7 @@ export const AboutPage: React.FC = () => {
             className="bg-white border border-slate-100 rounded-3xl p-8 relative overflow-hidden group shadow-md hover:shadow-lg transition-all duration-300"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 blur-2xl pointer-events-none" />
-            <div className="h-12 w-12 bg-[#D95B16]/10 rounded-2xl flex items-center justify-center text-[#D95B16] mb-6 border border-[#D95B16]/20">
-              <Eye size={24} />
-            </div>
-            <h3 className="text-2xl font-black font-sans mb-4 tracking-tight text-slate-900">Our Vision</h3>
+            <h3 className="text-2xl font-black font-sans mb-4 tracking-tight text-slate-900 mt-2">Our Vision</h3>
             <p className="text-slate-600 text-sm leading-relaxed font-sans">
               To be Pakistan's standard in mission-critical infrastructure integration. We envision automated commercial grids where biometric flow, 4K intelligent surveillance, and redundant fiber links seamlessly collaborate on a single secure platform.
             </p>
@@ -144,7 +138,6 @@ export const AboutPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {coreValues.map((value, idx) => {
-              const Icon = value.icon;
               return (
                 <motion.div 
                   key={idx}
@@ -154,10 +147,7 @@ export const AboutPage: React.FC = () => {
                   transition={{ duration: 0.5, delay: idx * 0.15 }}
                   className="bg-white border border-slate-100 rounded-2xl p-6 relative transition-all duration-300 group hover:scale-[1.02] shadow-sm hover:shadow-md"
                 >
-                  <div className={`h-10 w-10 bg-gradient-to-br ${value.color} rounded-xl flex items-center justify-center mb-4 border border-orange-500/10`}>
-                    <Icon size={20} style={{ color: value.accentColor }} />
-                  </div>
-                  <h4 className="text-lg font-black text-slate-900 mb-2 font-sans group-hover:text-[#D95B16] transition-colors">{value.title}</h4>
+                  <h4 className="text-lg font-black text-slate-900 mb-2 mt-2 font-sans group-hover:text-[#D95B16] transition-colors">{value.title}</h4>
                   <p className="text-xs text-slate-500 leading-relaxed font-sans">{value.description}</p>
                 </motion.div>
               );

@@ -7,7 +7,8 @@ import {
   ChevronRight,
   LogOut,
   Sliders,
-  Sparkles
+  Sparkles,
+  MessageCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -16,19 +17,13 @@ interface NavbarProps {
   onNavigate: (route: { page: string; serviceId?: string }) => void;
   contactPhone: string;
   onTriggerQuote: () => void;
-  isLoggedIn: boolean;
-  onShowAdmin: () => void;
-  onLogout: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentRoute,
   onNavigate,
   contactPhone,
-  onTriggerQuote,
-  isLoggedIn,
-  onShowAdmin,
-  onLogout
+  onTriggerQuote
 }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -176,49 +171,36 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* DESKTOP ACTIONS */}
             <div className="hidden md:flex items-center gap-5">
-              <a 
-                href={`tel:${contactPhone.replace(/\s+/g, "")}`} 
-                className="text-xs font-mono font-bold text-slate-600 hover:text-[#D95B16] transition-colors flex items-center gap-1.5"
+              <button 
+                onClick={onTriggerQuote}
+                className="bg-[#D95B16] hover:bg-[#C2410C] text-white text-xs font-black py-2.5 px-5 rounded-xl transition-all shadow-md hover:shadow-lg shadow-orange-500/10 hover:scale-[1.03] cursor-pointer uppercase tracking-wider font-mono flex items-center gap-1.5"
               >
-                <Phone size={13} className="text-[#D95B16]" />
-                <span>{contactPhone}</span>
-              </a>
+                <Sparkles size={13} className="text-white" />
+                <span>Get Quote</span>
+              </button>
 
-              {isLoggedIn ? (
-                <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl p-1">
-                  <button 
-                    onClick={onShowAdmin}
-                    className="p-1.5 text-slate-500 hover:text-[#D95B16] rounded-lg transition-colors cursor-pointer"
-                    title="Open Admin Controls"
-                  >
-                    <Sliders size={14} />
-                  </button>
-                  <button 
-                    onClick={onLogout}
-                    className="p-1.5 text-slate-500 hover:text-red-500 rounded-lg transition-colors cursor-pointer"
-                    title="Sign Out"
-                  >
-                    <LogOut size={14} />
-                  </button>
-                </div>
-              ) : (
-                <button 
-                  onClick={onTriggerQuote}
-                  className="bg-[#D95B16] hover:bg-[#C2410C] text-white text-xs font-black py-2.5 px-5 rounded-xl transition-all shadow-md hover:shadow-lg shadow-orange-500/10 hover:scale-[1.03] cursor-pointer uppercase tracking-wider font-mono"
-                >
-                  Get Quote
-                </button>
-              )}
+              <a 
+                href="https://wa.me/923185826202"
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-black py-2.5 px-5 rounded-xl transition-all shadow-md hover:shadow-lg shadow-emerald-500/10 hover:scale-[1.03] cursor-pointer flex items-center gap-1.5 font-mono uppercase tracking-wider"
+                title="Chat on WhatsApp"
+              >
+                <MessageCircle size={15} />
+                <span>WhatsApp</span>
+              </a>
             </div>
 
             {/* MOBILE NAVIGATION BUTTONS */}
             <div className="flex md:hidden items-center gap-3">
               <a 
-                href={`tel:${contactPhone.replace(/\s+/g, "")}`} 
-                className="p-2.5 text-[#D95B16] bg-slate-50 border border-slate-150 rounded-xl shadow-sm cursor-pointer"
-                aria-label="Call Direct Line"
+                href="https://wa.me/923185826202"
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="p-2.5 text-[#25D366] bg-emerald-50 border border-emerald-100 rounded-xl shadow-sm cursor-pointer flex items-center justify-center"
+                aria-label="WhatsApp Support"
               >
-                <Phone size={14} />
+                <MessageCircle size={15} />
               </a>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -373,45 +355,28 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
                   
                   <a 
-                    href={`tel:${contactPhone.replace(/\s+/g, "")}`}
-                    className="flex items-center gap-3 hover:text-[#D95B16] transition-colors"
+                    href="https://wa.me/923185826202"
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 hover:text-[#25D366] transition-colors"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-[#D95B16]/10 border border-[#D95B16]/20 flex items-center justify-center text-[#D95B16]">
-                      <Phone size={15} className="animate-pulse" />
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-[#25D366]">
+                      <MessageCircle size={15} className="animate-pulse" />
                     </div>
                     <div>
-                      <span className="block text-[10px] font-mono uppercase font-black text-slate-500">Call Priority Support</span>
-                      <span className="block text-sm font-black text-[#D95B16] tracking-tight">{contactPhone}</span>
+                      <span className="block text-[10px] font-mono uppercase font-black text-slate-500">WhatsApp Live Chat</span>
+                      <span className="block text-sm font-black text-[#25D366] tracking-tight">Support Chat</span>
                     </div>
                   </a>
                 </div>
 
-                {isLoggedIn ? (
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => { setMobileMenuOpen(false); onShowAdmin(); }}
-                      className="flex-1 py-3 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold font-mono transition-all cursor-pointer flex items-center justify-center gap-2"
-                    >
-                      <Sliders size={13} />
-                      <span>Admin Control Center</span>
-                    </button>
-                    <button 
-                      onClick={() => { setMobileMenuOpen(false); onLogout(); }}
-                      className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 p-3 rounded-xl cursor-pointer transition-all flex items-center justify-center"
-                      title="Terminate Session"
-                    >
-                      <LogOut size={14} />
-                    </button>
-                  </div>
-                ) : (
-                  <button 
-                    onClick={() => { setMobileMenuOpen(false); onTriggerQuote(); }}
-                    className="w-full bg-[#D95B16] hover:bg-[#C2410C] text-white font-black py-3.5 rounded-xl shadow-lg shadow-orange-500/10 text-xs tracking-wider uppercase cursor-pointer transition-all flex items-center justify-center gap-1.5"
-                  >
-                    <Sparkles size={13} className="text-white" />
-                    <span>Get Secure Architectural Quote</span>
-                  </button>
-                )}
+                <button 
+                  onClick={() => { setMobileMenuOpen(false); onTriggerQuote(); }}
+                  className="w-full bg-[#D95B16] hover:bg-[#C2410C] text-white font-black py-3.5 rounded-xl shadow-lg shadow-orange-500/10 text-xs tracking-wider uppercase cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                >
+                  <Sparkles size={13} className="text-white" />
+                  <span>Get Secure Architectural Quote</span>
+                </button>
               </div>
             </motion.nav>
           </div>

@@ -29,6 +29,7 @@ interface ContactPageProps {
 
 export const ContactPage: React.FC<ContactPageProps> = ({ contactInfo, onTriggerQuote }) => {
   const [formName, setFormName] = useState("");
+  const [formEmail, setFormEmail] = useState("");
   const [formPhone, setFormPhone] = useState("");
   const [selectedServiceId, setSelectedServiceId] = useState(SERVICES[0]?.id || "");
   const [phoneError, setPhoneError] = useState("");
@@ -77,7 +78,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ contactInfo, onTrigger
 
     const selectedService = SERVICES.find(s => s.id === selectedServiceId);
     const serviceTitle = selectedService ? selectedService.title : "General Support Inquiry";
-    const targetUrl = `https://script.google.com/macros/s/AKfycbxjjAwiSdR6uiYtZQUUSrxw86PV8QW_hgwjrGRN1xLkH35s8idxjyr4wwM60koaMkp-/exec?name=${encodeURIComponent(formName)}&phone=${encodeURIComponent(formPhone)}&service=${encodeURIComponent(serviceTitle)}`;
+    const targetUrl = `https://script.google.com/macros/s/AKfycbxjjAwiSdR6uiYtZQUUSrxw86PV8QW_hgwjrGRN1xLkH35s8idxjyr4wwM60koaMkp-/exec?name=${encodeURIComponent(formName)}&email=${encodeURIComponent(formEmail)}&phone=${encodeURIComponent(formPhone)}&service=${encodeURIComponent(serviceTitle)}`;
 
     fetch(targetUrl, {
       method: "GET",
@@ -93,6 +94,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ contactInfo, onTrigger
       setIsSubmitting(false);
       setShowSuccessPopup(true);
       setFormName("");
+      setFormEmail("");
       setFormPhone("");
     });
   };
@@ -199,6 +201,24 @@ export const ContactPage: React.FC<ContactPageProps> = ({ contactInfo, onTrigger
                     placeholder="Enter your first and last name"
                     value={formName}
                     onChange={(e) => setFormName(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white focus:ring-1 focus:ring-[#D95B16] rounded-xl py-3.5 px-4 text-xs font-semibold text-slate-800 outline-none transition-all placeholder:text-slate-400"
+                  />
+                </div>
+              </div>
+
+              {/* Email Address Input */}
+              <div className="space-y-2 text-left">
+                <label className="block text-[10px] font-mono uppercase tracking-widest text-slate-500 font-extrabold flex items-center gap-1.5">
+                  <Mail size={12} className="text-[#D95B16]" />
+                  <span>Email Address</span>
+                </label>
+                <div className="relative">
+                  <input 
+                    type="email"
+                    required
+                    placeholder="Enter your email address (e.g. name@company.com)"
+                    value={formEmail}
+                    onChange={(e) => setFormEmail(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white focus:ring-1 focus:ring-[#D95B16] rounded-xl py-3.5 px-4 text-xs font-semibold text-slate-800 outline-none transition-all placeholder:text-slate-400"
                   />
                 </div>

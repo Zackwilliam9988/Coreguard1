@@ -227,21 +227,6 @@ export const QuoteDialog: React.FC<QuoteDialogProps> = ({
                       />
                     </div>
 
-                    {/* Phone Number Input */}
-                    <div className="space-y-1.5">
-                      <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-500 font-semibold flex items-center gap-1.5">
-                        <Phone size={11} className="text-[#D95B16]" /> Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        placeholder="+92 300 1234567"
-                        className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#D95B16]/5 transition-all duration-200 font-sans"
-                      />
-                    </div>
-
                     {/* Email Input */}
                     <div className="space-y-1.5">
                       <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-500 font-semibold flex items-center gap-1.5">
@@ -253,6 +238,21 @@ export const QuoteDialog: React.FC<QuoteDialogProps> = ({
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="john@example.com"
+                        className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#D95B16]/5 transition-all duration-200 font-sans"
+                      />
+                    </div>
+
+                    {/* Phone Number Input */}
+                    <div className="space-y-1.5">
+                      <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-500 font-semibold flex items-center gap-1.5">
+                        <Phone size={11} className="text-[#D95B16]" /> Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder="+92 300 1234567"
                         className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#D95B16]/5 transition-all duration-200 font-sans"
                       />
                     </div>
