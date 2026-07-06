@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 
 export const CustomCursor: React.FC = () => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   
+  const mouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const trailRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  const cursorRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
+  const dotRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Only enable custom cursor on fine pointer devices (desktops)
@@ -17,14 +17,17 @@ export const CustomCursor: React.FC = () => {
     setIsVisible(true);
 
     const handleMouseMove = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY });
+      mouseRef.current = { x: e.clientX, y: e.clientY };
 
-      // Check if mouse is hovering over an interactive/clickable element
-      const target = e.target as HTMLElement;
-      const hoverSelector = "button, a, select, input, [role='button'], .cursor-pointer, .clickable";
-      const isInteractive = target && (target.closest(hoverSelector) !== null);
-      
-      setIsHovered(isInteractive);
+      try {
+        // Check if mouse is hovering over an interactive/clickable element
+        const target = e.target as HTMLElement;
+        const hoverSelector = "button, a, select, input, [role='button'], .cursor-pointer, .clickable";
+        const isInteractive = target && typeof target.closest === "function" && (target.closest(hoverSelector) !== null);
+        setIsHovered(!!isInteractive);
+      } catch (err) {
+        setIsHovered(false);
+      }
     };
 
     const handleMouseLeave = () => {
@@ -39,18 +42,19 @@ export const CustomCursor: React.FC = () => {
     document.addEventListener("mouseleave", handleMouseLeave);
     document.addEventListener("mouseenter", handleMouseEnter);
 
-    // Motorized smooth LERP trail movement for the outer glowing ring
+    // Motorized smooth LERP trail movement for the outer glowing ring and direct positioning of the dot
     let animId: number;
     const updateTrail = () => {
-      if (trailRef.current && ringRef.current) {
+      if (ringRef.current && dotRef.current) {
         // Move outer ring 15% towards inner pointer on each frame for organic drag lag
-        const dx = position.x - trailRef.current.x;
-        const dy = position.y - trailRef.current.y;
+        const dx = mouseRef.current.x - trailRef.current.x;
+        const dy = mouseRef.current.y - trailRef.current.y;
         
         trailRef.current.x += dx * 0.15;
         trailRef.current.y += dy * 0.15;
         
         ringRef.current.style.transform = `translate3d(${trailRef.current.x}px, ${trailRef.current.y}px, 0) translate(-50%, -50%)`;
+        dotRef.current.style.transform = `translate3d(${mouseRef.current.x}px, ${mouseRef.current.y}px, 0) translate(-50%, -50%)`;
       }
       animId = requestAnimationFrame(updateTrail);
     };
@@ -63,7 +67,7 @@ export const CustomCursor: React.FC = () => {
       document.removeEventListener("mouseenter", handleMouseEnter);
       cancelAnimationFrame(animId);
     };
-  }, [position.x, position.y]);
+  }, []);
 
   if (!isVisible) return null;
 
@@ -84,13 +88,12 @@ export const CustomCursor: React.FC = () => {
       
       {/* Inner Pin-Point Laser Dot */}
       <div 
-        className={`fixed top-0 left-0 h-1.5 w-1.5 rounded-full bg-[#D95B16] -translate-x-1/2 -translate-y-1/2 shadow-[0_0_8px_#D95B16] transition-transform duration-100 ${
+        ref={dotRef}
+        className={`fixed top-0 left-0 h-1.5 w-1.5 rounded-full bg-[#D95B16] shadow-[0_0_8px_#D95B16] transition-transform duration-100 ${
           isHovered ? "scale-150 bg-[#D95B16] shadow-[0_0_10px_#D95B16]" : "scale-100"
         }`}
         style={{
-          left: `${position.x}px`,
-          top: `${position.y}px`,
-          willChange: "left, top"
+          willChange: "transform"
         }}
       />
     </div>

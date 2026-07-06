@@ -32,7 +32,9 @@ export const SophiaChat: React.FC = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [step, setStep] = useState<"name" | "email" | "phone" | "service" | "completed">("name");
+  const [selectedService, setSelectedService] = useState("None / Just Callback");
+  const [comment, setComment] = useState("");
+  const [step, setStep] = useState<"phone" | "name" | "email" | "service" | "comment" | "completed">("phone");
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputVal, setInputVal] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -41,6 +43,61 @@ export const SophiaChat: React.FC = () => {
   const [unreadCount, setUnreadCount] = useState(1);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const hasSubmittedRef = useRef(false);
+  const submissionTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const latestDataRef = useRef({ name: "", email: "", phone: "", service: "None / Just Callback", comment: "" });
+
+  useEffect(() => {
+    latestDataRef.current = { name, email, phone, service: selectedService, comment };
+  }, [name, email, phone, selectedService, comment]);
+
+  useEffect(() => {
+    return () => {
+      if (submissionTimer.current) {
+        clearTimeout(submissionTimer.current);
+      }
+    };
+  }, []);
+
+  const scheduleSubmission = () => {
+    if (submissionTimer.current) {
+      clearTimeout(submissionTimer.current);
+    }
+    submissionTimer.current = setTimeout(() => {
+      triggerSubmission(false);
+    }, 30000); // 30 seconds delay
+  };
+
+  const triggerSubmission = (isFinal: boolean = false, finalComment?: string) => {
+    if (hasSubmittedRef.current && !isFinal) return;
+
+    const currentData = latestDataRef.current;
+    // Require at least a phone number, name or email to submit
+    if (!currentData.phone && !currentData.email && !currentData.name) {
+      return;
+    }
+
+    if (submissionTimer.current) {
+      clearTimeout(submissionTimer.current);
+      submissionTimer.current = null;
+    }
+
+    if (isFinal) {
+      hasSubmittedRef.current = true;
+    }
+
+    const resolvedComment = finalComment !== undefined ? finalComment : currentData.comment;
+
+    submitData(
+      currentData.name,
+      currentData.phone,
+      currentData.email,
+      currentData.service,
+      resolvedComment,
+      isFinal
+    );
+  };
 
   // Initialize with exactly one message from Sophia
   useEffect(() => {
@@ -53,15 +110,50 @@ export const SophiaChat: React.FC = () => {
             {
               id: "msg-welcome",
               sender: "bot",
-              text: "Aslamoalikum this is Sophia Your AI help agent Please provide your full name"
+              text: "Aslamoalikum this is Sophia Your AI help agent Please provide your phone number so we can reach you:"
             }
           ]);
+          setStep("phone");
+          setInputVal("+92");
           setIsTyping(false);
         }, 500);
         return () => clearTimeout(timer);
       }
     }
   }, [isOpen, messages.length]);
+
+  // Listen to open-sophia-chat custom event
+  useEffect(() => {
+    const handleOpenEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<{ serviceId?: string }>;
+      setIsOpen(true);
+      
+      const serviceId = customEvent.detail?.serviceId;
+      if (serviceId) {
+        const srv = SERVICES.find(s => s.id === serviceId);
+        if (srv) {
+          setMessages(prev => {
+            const hasPreselect = prev.some(m => m.id.startsWith("bot-quote-trigger-"));
+            if (hasPreselect) return prev;
+
+            return [
+              ...prev,
+              {
+                id: `bot-quote-trigger-${Date.now()}`,
+                sender: "bot",
+                text: `I see you are interested in our "${srv.title}" solution! Let's configure a custom quote for you.`
+              }
+            ];
+          });
+        }
+      }
+    };
+
+    window.addEventListener("open-sophia-chat", handleOpenEvent);
+    return () => {
+      window.removeEventListener("open-sophia-chat", handleOpenEvent);
+    };
+  }, []);
 
   // Autoscroll helper
   useEffect(() => {
@@ -71,17 +163,24 @@ export const SophiaChat: React.FC = () => {
   }, [messages, isTyping]);
 
   // Secure data submission
-  const submitData = (nameValue: string, phoneValue: string, emailValue: string, selectedServiceTitle: string, isFinal: boolean = true) => {
+  const submitData = (nameValue: string, phoneValue: string, emailValue: string, selectedServiceTitle: string, commentValue: string, isFinal: boolean = true) => {
     if (isFinal) {
       setIsSubmitting(true);
       setIsTyping(true);
     }
 
     const encodedName = encodeURIComponent(nameValue || name || "Sophia Chatbot Agent");
-    const encodedPhone = encodeURIComponent(phoneValue);
-    const encodedEmail = encodeURIComponent(emailValue);
+    const encodedPhone = encodeURIComponent(phoneValue || phone);
+    const encodedEmail = encodeURIComponent(emailValue || email);
     const encodedService = encodeURIComponent(selectedServiceTitle);
-    const targetUrl = `https://script.google.com/macros/s/AKfycbxjjAwiSdR6uiYtZQUUSrxw86PV8QW_hgwjrGRN1xLkH35s8idxjyr4wwM60koaMkp-/exec?name=${encodedName}&phone=${encodedPhone}&email=${encodedEmail}&service=${encodedService}`;
+    
+    // Build custom message based on comment, otherwise submit blank
+    const userMsg = (commentValue && commentValue.toLowerCase() !== "none")
+      ? commentValue
+      : "";
+    const encodedMessage = encodeURIComponent(userMsg);
+    
+    const targetUrl = `https://script.google.com/macros/s/AKfycbxjjAwiSdR6uiYtZQUUSrxw86PV8QW_hgwjrGRN1xLkH35s8idxjyr4wwM60koaMkp-/exec?name=${encodedName}&email=${encodedEmail}&phone=${encodedPhone}&service=${encodedService}&message=${encodedMessage}`;
 
     fetch(targetUrl, {
       method: "GET",
@@ -115,7 +214,88 @@ export const SophiaChat: React.FC = () => {
     });
   };
 
-  // Handle name submission
+  // Handle phone submission (Step 1)
+  const processPhoneInput = (val: string) => {
+    setErrorText("");
+    const trimmed = val.trim();
+    if (!trimmed) return;
+
+    // Clean all non-numeric characters to check digits
+    const digits = trimmed.replace(/\D/g, "");
+
+    let normalizedPhone = "";
+
+    if (trimmed.startsWith("0")) {
+      // Must be 11 digits (e.g. 03001234567)
+      if (digits.length === 11) {
+        normalizedPhone = "+92" + digits.substring(1);
+      } else {
+        setErrorText("When starting with 0, a correct Pakistani number must have exactly 11 digits (e.g., 03001234567).");
+        return;
+      }
+    } else if (trimmed.startsWith("+92")) {
+      // If it has +92, check the digits after 92
+      let afterCode = trimmed.substring(3).replace(/\D/g, "");
+      if (afterCode.length === 11 && afterCode.startsWith("0")) {
+        afterCode = afterCode.substring(1);
+      }
+      if (afterCode.length === 10) {
+        normalizedPhone = "+92" + afterCode;
+      } else {
+        setErrorText("A valid number with +92 must have 10 digits after the country code (e.g., +923001234567).");
+        return;
+      }
+    } else if (trimmed.startsWith("92")) {
+      let afterCode = trimmed.substring(2).replace(/\D/g, "");
+      if (afterCode.length === 11 && afterCode.startsWith("0")) {
+        afterCode = afterCode.substring(1);
+      }
+      if (afterCode.length === 10) {
+        normalizedPhone = "+92" + afterCode;
+      } else if (digits.length === 12) {
+        normalizedPhone = "+" + digits;
+      } else {
+        setErrorText("A valid number with 92 country code must have 12 digits (e.g., 923001234567).");
+        return;
+      }
+    } else if (digits.length === 10) {
+      // Direct number without leading 0 or country code (e.g. 3001234567)
+      normalizedPhone = "+92" + digits;
+    } else {
+      setErrorText("Please enter a valid Pakistani number starting with 03 or 3 (e.g., 03001234567).");
+      return;
+    }
+
+    setPhone(normalizedPhone);
+    setInputVal("");
+
+    // Add user's phone message
+    setMessages(prev => [
+      ...prev,
+      { id: `user-phone-${Date.now()}`, sender: "user", text: normalizedPhone }
+    ]);
+
+    // Schedule 30-second delayed background submission
+    scheduleSubmission();
+
+    // Bot responds and requests name
+    setIsTyping(true);
+    setTimeout(() => {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: `bot-name-prompt-${Date.now()}`,
+          sender: "bot",
+          text: "Excellent! Now please provide your full name so I know who I am speaking with:"
+        }
+      ]);
+      setStep("name");
+      setInputVal(""); // Clear pre-population for name step
+      setIsTyping(false);
+    }, 1000);
+  };
+
+  // Handle name submission (Step 2)
   const processNameInput = (val: string) => {
     setErrorText("");
     const trimmed = val.trim();
@@ -134,6 +314,9 @@ export const SophiaChat: React.FC = () => {
       { id: `user-name-${Date.now()}`, sender: "user", text: trimmed }
     ]);
 
+    // Reset/schedule 30-second delayed background submission
+    scheduleSubmission();
+
     // Bot responds and requests email
     setIsTyping(true);
     setTimeout(() => {
@@ -142,15 +325,16 @@ export const SophiaChat: React.FC = () => {
         {
           id: `bot-email-select-${Date.now()}`,
           sender: "bot",
-          text: `Thank you, ${trimmed}! Please provide your email address for direct technical document transmission (second step):`
+          text: `Thank you, ${trimmed}! Please provide your email address for direct technical document transmission:`
         }
       ]);
       setStep("email");
+      setInputVal("");
       setIsTyping(false);
     }, 1000);
   };
 
-  // Handle email submission
+  // Handle email submission (Step 3)
   const processEmailInput = (val: string) => {
     setErrorText("");
     const trimmed = val.trim();
@@ -172,48 +356,10 @@ export const SophiaChat: React.FC = () => {
       { id: `user-email-${Date.now()}`, sender: "user", text: trimmed }
     ]);
 
-    // Bot responds and requests phone
-    setIsTyping(true);
-    setTimeout(() => {
-      setMessages(prev => [
-        ...prev,
-        {
-          id: `bot-phone-select-${Date.now()}`,
-          sender: "bot",
-          text: "Perfect! Now please provide your phone number so a site inspector can coordinate with you:"
-        }
-      ]);
-      setStep("phone");
-      setIsTyping(false);
-    }, 1000);
-  };
+    // Reset/schedule 30-second delayed background submission
+    scheduleSubmission();
 
-  // Handle phone submission
-  const processPhoneInput = (val: string) => {
-    setErrorText("");
-    const trimmed = val.trim();
-    if (!trimmed) return;
-
-    // Standard phone validation regex
-    const phoneRegex = /^[0-9+\-\s()]{7,18}$/;
-    if (!phoneRegex.test(trimmed)) {
-      setErrorText("Please enter a valid phone number.");
-      return;
-    }
-
-    setPhone(trimmed);
-    setInputVal("");
-
-    // Add user's phone message
-    setMessages(prev => [
-      ...prev,
-      { id: `user-phone-${Date.now()}`, sender: "user", text: trimmed }
-    ]);
-
-    // IMMEDIATE background submission (handles client skipping further selections)
-    submitData(name, trimmed, email, "None / Just Callback", false);
-
-    // Bot responds and requests service
+    // Bot responds and requests service (Step 4)
     setIsTyping(true);
     setTimeout(() => {
       setMessages(prev => [
@@ -221,32 +367,72 @@ export const SophiaChat: React.FC = () => {
         {
           id: `bot-service-select-${Date.now()}`,
           sender: "bot",
-          text: "Excellent! I have registered your phone number. To speed up your response, please select the service you are interested in below, or close this chat if you just need a general callback:",
+          text: "Perfect! Now please select the core network or security solution you are interested in below:",
           isServiceSelector: true
         }
       ]);
       setStep("service");
+      setInputVal("");
       setIsTyping(false);
     }, 1000);
   };
 
   const handleSendForm = (e: React.FormEvent) => {
     e.preventDefault();
-    if (step === "name") {
+    if (step === "phone") {
+      processPhoneInput(inputVal);
+    } else if (step === "name") {
       processNameInput(inputVal);
     } else if (step === "email") {
       processEmailInput(inputVal);
-    } else if (step === "phone") {
-      processPhoneInput(inputVal);
+    } else if (step === "comment") {
+      processCommentInput(inputVal);
     }
   };
 
+  // Handle service selection (Step 4)
   const handleSelectService = (serviceTitle: string) => {
+    setSelectedService(serviceTitle);
     setMessages(prev => [
       ...prev,
       { id: `user-srv-${Date.now()}`, sender: "user", text: `I am interested in ${serviceTitle}` }
     ]);
-    submitData(name, phone, email, serviceTitle, true);
+    
+    // Reset/schedule 30-second delayed background submission
+    scheduleSubmission();
+
+    // Ask one more question at the end for the comment (Step 5)
+    setIsTyping(true);
+    setTimeout(() => {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: `bot-comment-prompt-${Date.now()}`,
+          sender: "bot",
+          text: "Perfect! Would you like to add any comments, messages, or special requirements? Please type them below or type 'none' to skip and submit."
+        }
+      ]);
+      setStep("comment");
+      setInputVal("");
+      setIsTyping(false);
+    }, 1000);
+  };
+
+  // Handle comment submission (Step 5)
+  const processCommentInput = (val: string) => {
+    const trimmed = val.trim();
+    if (!trimmed) return;
+
+    setComment(trimmed);
+    setInputVal("");
+
+    setMessages(prev => [
+      ...prev,
+      { id: `user-comment-${Date.now()}`, sender: "user", text: trimmed }
+    ]);
+
+    // Final step, submit immediately
+    triggerSubmission(true, trimmed);
   };
 
   // Quick Questions handlers
@@ -294,13 +480,33 @@ export const SophiaChat: React.FC = () => {
     }, 1000);
   };
 
+  const handleCloseChat = () => {
+    setIsOpen(false);
+    triggerSubmission(false);
+  };
+
+  const handleToggleOpen = () => {
+    const nextState = !isOpen;
+    setIsOpen(nextState);
+    if (!nextState) {
+      triggerSubmission(false);
+    }
+  };
+
   const handleReset = () => {
+    if (submissionTimer.current) {
+      clearTimeout(submissionTimer.current);
+      submissionTimer.current = null;
+    }
+    hasSubmittedRef.current = false;
     setName("");
     setPhone("");
     setEmail("");
-    setStep("name");
+    setSelectedService("None / Just Callback");
+    setComment("");
+    setStep("phone");
     setMessages([]);
-    setInputVal("");
+    setInputVal("+92");
     setErrorText("");
     setIsTyping(true);
     setTimeout(() => {
@@ -308,7 +514,7 @@ export const SophiaChat: React.FC = () => {
         {
           id: "msg-welcome-re",
           sender: "bot",
-          text: "Aslamoalikum this is Sophia Your AI help agent Please provide your full name"
+          text: "Aslamoalikum this is Sophia Your AI help agent Please provide your phone number so we can reach you:"
         }
       ]);
       setIsTyping(false);
@@ -361,7 +567,7 @@ export const SophiaChat: React.FC = () => {
                     <RefreshCw size={14} />
                   </button>
                   <button
-                    onClick={() => setIsOpen(false)}
+                    onClick={handleCloseChat}
                     className="p-1.5 text-slate-400 hover:text-slate-750 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer border-none bg-transparent"
                   >
                     <X size={16} />
@@ -444,34 +650,6 @@ export const SophiaChat: React.FC = () => {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Quick Assistant Pills Area - Floating cleanly above input, only in name/email/phone step */}
-              {(step === "name" || step === "email" || step === "phone") && (
-                <div className="px-4 py-2 border-t border-slate-100 bg-slate-50 flex flex-col gap-1.5">
-                  <span className="text-[9px] font-mono uppercase text-slate-400 tracking-wider font-extrabold text-left flex items-center gap-1">
-                    <Sparkles size={10} className="text-[#D95B16]" />
-                    <span>Quick Questions</span>
-                  </span>
-                  <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-                    <button
-                       type="button"
-                       onClick={() => handleQuickQuestion("cabling")}
-                       className="shrink-0 bg-white hover:bg-orange-50/50 border border-slate-200 hover:border-orange-200 text-slate-600 hover:text-[#D95B16] px-3 py-1.5 rounded-full text-[10.5px] font-medium transition-all duration-200 cursor-pointer flex items-center gap-1 active:scale-95"
-                    >
-                      <HelpCircle size={11} className="text-[#D95B16]" />
-                      <span>Cat6 vs Cat5e</span>
-                    </button>
-                    <button
-                       type="button"
-                       onClick={() => handleQuickQuestion("splitters")}
-                       className="shrink-0 bg-white hover:bg-orange-50/50 border border-slate-200 hover:border-orange-200 text-slate-600 hover:text-[#D95B16] px-3 py-1.5 rounded-full text-[10.5px] font-medium transition-all duration-200 cursor-pointer flex items-center gap-1 active:scale-95"
-                    >
-                      <HelpCircle size={11} className="text-[#D95B16]" />
-                      <span>Optical Splitters</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-
               {/* Error Alert Display */}
               {errorText && (
                 <div className="mx-4 mb-2 p-3 bg-red-50 border border-red-100 rounded-xl flex items-center gap-2.5 text-[11px] text-red-600 text-left animate-in shake duration-200">
@@ -482,7 +660,7 @@ export const SophiaChat: React.FC = () => {
 
               {/* Form Input Container */}
               <div className="p-4 border-t border-slate-100 bg-slate-50">
-                {(step === "name" || step === "email" || step === "phone") ? (
+                {(step === "name" || step === "email" || step === "phone" || step === "comment") ? (
                   <form onSubmit={handleSendForm} className="flex gap-2">
                     <div className="relative flex-1">
                       <input
@@ -492,8 +670,10 @@ export const SophiaChat: React.FC = () => {
                           step === "name"
                             ? "Type your full name + hit Enter..."
                             : step === "email"
-                              ? "Type email + hit Enter (second option)..."
-                              : "Type phone number + hit Enter..."
+                              ? "Type email + hit Enter..."
+                              : step === "phone"
+                                ? "Type phone number + hit Enter..."
+                                : "Type custom request or 'none' to skip..."
                         }
                         value={inputVal}
                         onChange={(e) => setInputVal(e.target.value)}
@@ -503,8 +683,10 @@ export const SophiaChat: React.FC = () => {
                         <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={13} />
                       ) : step === "email" ? (
                         <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={13} />
-                      ) : (
+                      ) : step === "phone" ? (
                         <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={13} />
+                      ) : (
+                        <MessageSquare className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={13} />
                       )}
                     </div>
                     <button
@@ -524,7 +706,7 @@ export const SophiaChat: React.FC = () => {
                     ) : (
                       <>
                         <Cpu size={12} className="text-[#D95B16] animate-pulse" />
-                        <span>Tap service above (phone is already submitted!)</span>
+                        <span>Tap a service above to customize your quote</span>
                       </>
                     )}
                   </div>
@@ -554,7 +736,7 @@ export const SophiaChat: React.FC = () => {
       <div className="flex items-center gap-3">
 
         <button
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={handleToggleOpen}
           className={`relative flex h-14 w-14 items-center justify-center rounded-full shadow-[0_12px_35px_rgba(217,91,22,0.25)] transition-all duration-300 cursor-pointer group active:scale-95 ${
             isOpen 
               ? "bg-slate-900 border border-slate-800 text-white hover:border-slate-700" 

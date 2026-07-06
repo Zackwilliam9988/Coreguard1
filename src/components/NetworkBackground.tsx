@@ -159,9 +159,9 @@ export const NetworkBackground: React.FC = () => {
       mouseRef.current = { x: null, y: null };
     };
 
-    const parent = canvas.parentElement || window;
-    parent.addEventListener("mousemove", handleMouseMove as any);
-    parent.addEventListener("mouseleave", handleMouseLeave as any);
+    const listenerTarget = canvas.parentElement || window;
+    listenerTarget.addEventListener("mousemove", handleMouseMove as any);
+    listenerTarget.addEventListener("mouseleave", handleMouseLeave as any);
 
     // Initial draw trigger
     draw();
@@ -169,8 +169,8 @@ export const NetworkBackground: React.FC = () => {
     return () => {
       cancelAnimationFrame(animationFrameId);
       resizeObserver.disconnect();
-      parent.removeEventListener("mousemove", handleMouseMove as any);
-      parent.removeEventListener("mouseleave", handleMouseLeave as any);
+      listenerTarget.removeEventListener("mousemove", handleMouseMove as any);
+      listenerTarget.removeEventListener("mouseleave", handleMouseLeave as any);
     };
   }, []);
 

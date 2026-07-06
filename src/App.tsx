@@ -319,7 +319,11 @@ export default function App() {
     }
     
     window.history.pushState(null, "", url);
-    window.dispatchEvent(new Event("popstate"));
+    
+    // Defer the popstate event to decouple it from current React render or event task queue
+    setTimeout(() => {
+      window.dispatchEvent(new Event("popstate"));
+    }, 0);
   };
 
   useEffect(() => {
@@ -349,8 +353,7 @@ export default function App() {
 
 
   const triggerQuote = (serviceId?: string) => {
-    setPreselectedService(serviceId);
-    setQuoteDialogOpen(true);
+    window.dispatchEvent(new CustomEvent("open-sophia-chat", { detail: { serviceId } }));
   };
 
   const selectServiceDetail = (service: Service) => {

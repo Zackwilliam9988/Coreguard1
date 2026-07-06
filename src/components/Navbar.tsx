@@ -91,9 +91,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span className="block font-display font-black text-xl tracking-tight text-slate-950 leading-none uppercase">
                     Core<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D95B16] to-[#EA580C] group-hover:from-[#EA580C] group-hover:to-[#D95B16] transition-all duration-500">Guard</span>
                   </span>
-                  <span className="text-[8px] font-mono font-bold text-[#D95B16] bg-[#D95B16]/10 border border-[#D95B16]/25 px-1.5 py-0.5 rounded uppercase tracking-wider">
-                    PRO
-                  </span>
                 </div>
                 <span className="block text-[7px] font-mono tracking-widest uppercase font-black text-slate-500 group-hover:text-[#D95B16] transition-colors mt-1.5">
                   SECURE • CONNECT • PROTECT
