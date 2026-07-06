@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0" stop-color="#0ea5a2"/>
+      <stop offset="1" stop-color="#f97316"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="#fff"/>
+  <g transform="translate(80,60)">
+    <rect x="0" y="0" width="1040" height="640" rx="18" fill="#0f172a" opacity="0.95" />
+    <g transform="translate(40,40)">
+      <rect x="0" y="0" width="520" height="320" rx="12" fill="#0b1220" stroke="#111827" stroke-width="2" />
+      <rect x="560" y="0" width="340" height="220" rx="10" fill="#06121a" stroke="#0b1220" stroke-width="2" />
+
+      <!-- Splicer clamps -->
+      <rect x="120" y="60" width="280" height="20" rx="4" fill="#111827" />
+      <rect x="120" y="120" width="280" height="20" rx="4" fill="#111827" />
+
+      <!-- Fiber cables -->
+      <path d="M20 230 C120 210, 220 210, 300 200" stroke="url(#g)" stroke-width="8" fill="none" stroke-linecap="round"/>
+      <path d="M420 230 C520 210, 620 210, 700 200" stroke="#ffd166" stroke-width="6" fill="none" stroke-linecap="round"/>
+
+      <!-- Fusion arc -->
+      <circle cx="340" cy="110" r="18" fill="#7dd3fc" opacity="0.95" />
+      <circle cx="340" cy="110" r="8" fill="#fff" />
+
+      <!-- Display -->
+      <rect x="40" y="200" width="240" height="92" rx="8" fill="#020617" />
+      <text x="60" y="235" fill="#7dd3fc" font-size="20" font-family="monospace">SM AUTO  0.0 dB</text>
+
+      <!-- Tools -->
+      <rect x="640" y="240" width="220" height="52" rx="6" fill="#071224" />
+      <text x="660" y="275" fill="#bff3d6" font-size="16" font-family="sans-serif">FTTH Fusion Splicer</text>
+    </g>
+  </g>
+</svg>

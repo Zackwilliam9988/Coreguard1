@@ -17,7 +17,7 @@ export const SERVICES: Service[] = [
     fullDescription: "Minimize db-loss ratios with premium Fujikura core-alignment fusion splicing. We execute precise mechanical or thermal terminations, protect splices with physical heat-shrink tubes, and handle multi-core single-mode or multi-mode indoor/outdoor cable links for maximum structural throughput.",
     iconName: "Cable",
     hot: true,
-    imageUrl: "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?auto=format&fit=crop&w=600&q=80",
+    imageUrl: "/src/assets/images/fiber-splicing.svg",
   },
   {
     id: "network-setup",
