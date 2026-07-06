@@ -1,4 +1,5 @@
 import { Service, Benefit, Stat, FAQItem } from "./types";
+import fiberSplicingImg from "./assets/images/fiber-splicing.svg";
 
 export const SERVICES: Service[] = [
   {
@@ -17,7 +18,7 @@ export const SERVICES: Service[] = [
     fullDescription: "Minimize db-loss ratios with premium Fujikura core-alignment fusion splicing. We execute precise mechanical or thermal terminations, protect splices with physical heat-shrink tubes, and handle multi-core single-mode or multi-mode indoor/outdoor cable links for maximum structural throughput.",
     iconName: "Cable",
     hot: true,
-    imageUrl: "/src/assets/images/fiber-splicing.svg",
+    imageUrl: fiberSplicingImg,
   },
   {
     id: "network-setup",
