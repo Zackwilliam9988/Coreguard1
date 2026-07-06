@@ -9,7 +9,6 @@ import {
   LogOut,
   Sliders,
   Sparkles,
-  MessageCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -26,6 +25,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   contactPhone,
   onTriggerQuote
 }) => {
+  const WhatsAppIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="M20.52 3.48A11.86 11.86 0 0 0 12 0C5.37 0 .04 5.33.04 12.04c0 2.12.56 4.18 1.62 6.01L0 24l6.2-1.62A11.88 11.88 0 0 0 12 24c6.63 0 11.96-5.33 11.96-11.96 0-3.19-1.24-6.18-3.44-8.56zM12 21.5c-1.3 0-2.58-.34-3.7-.98l-.27-.16L5.07 20l1.78-2.9-.18-.29A8.5 8.5 0 1 1 20.5 12 8.48 8.48 0 0 1 12 21.5zM17.06 14.22c-.28-.14-1.64-.8-1.9-.89-.26-.09-.45-.14-.64.14-.18.28-.69.89-.85 1.07-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.25-1.39-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.12-.12.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.34-.02-.48-.07-.14-.64-1.54-.88-2.1-.23-.55-.46-.48-.64-.49-.16-.01-.36-.01-.55-.01-.18 0-.48.07-.73.34-.25.27-.96.94-.96 2.29 0 1.35.98 2.65 1.12 2.83.14.18 1.94 2.98 4.7 4.18 1.31.55 2.33.88 3.13 1.13.5.15.96.13 1.32.08.4-.06 1.64-.67 1.88-1.32.24-.65.24-1.21.17-1.32-.06-.12-.23-.18-.5-.32z" />
+    </svg>
+  );
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -174,7 +178,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="bg-[#D95B16] hover:bg-[#C2410C] text-white text-xs font-black py-2.5 px-5 rounded-xl transition-all shadow-md hover:shadow-lg shadow-orange-500/10 hover:scale-[1.03] cursor-pointer uppercase tracking-wider font-mono flex items-center gap-1.5"
               >
                 <Sparkles size={13} className="text-white" />
-                <span>Get Quote</span>
+                <span>Get a Quote</span>
               </button>
 
               <a 
@@ -184,7 +188,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-black py-2.5 px-5 rounded-xl transition-all shadow-md hover:shadow-lg shadow-emerald-500/10 hover:scale-[1.03] cursor-pointer flex items-center gap-1.5 font-mono uppercase tracking-wider"
                 title="Chat on WhatsApp"
               >
-                <MessageCircle size={15} />
+                <WhatsAppIcon className="w-4 h-4" />
                 <span>WhatsApp</span>
               </a>
             </div>
@@ -198,7 +202,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="p-2.5 text-[#25D366] bg-emerald-50 border border-emerald-100 rounded-xl shadow-sm cursor-pointer flex items-center justify-center"
                 aria-label="WhatsApp Support"
               >
-                <MessageCircle size={15} />
+                <WhatsAppIcon className="w-4 h-4" />
               </a>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -359,7 +363,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     className="flex items-center gap-3 hover:text-[#25D366] transition-colors"
                   >
                     <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-[#25D366]">
-                      <MessageCircle size={15} className="animate-pulse" />
+                      <WhatsAppIcon className="w-4 h-4 animate-pulse" />
                     </div>
                     <div>
                       <span className="block text-[10px] font-mono uppercase font-black text-slate-500">WhatsApp Live Chat</span>
@@ -373,7 +377,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   className="w-full bg-[#D95B16] hover:bg-[#C2410C] text-white font-black py-3.5 rounded-xl shadow-lg shadow-orange-500/10 text-xs tracking-wider uppercase cursor-pointer transition-all flex items-center justify-center gap-1.5"
                 >
                   <Sparkles size={13} className="text-white" />
-                  <span>Get Secure Architectural Quote</span>
+                  <span>Get a Quote</span>
                 </button>
               </div>
             </motion.nav>
