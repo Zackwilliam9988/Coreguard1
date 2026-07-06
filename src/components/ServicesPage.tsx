@@ -211,72 +211,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({
           </div>
         </div>
 
-        {/* CONTROLS BAR: SEARCH & FLEXIBLE CATEGORIES */}
-        <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4.5 mb-12 shadow-sm flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-5">
-          
-          {/* Categories select row with dynamic Framer Motion slider indicator */}
-          <div className="flex flex-wrap items-center gap-2 order-2 xl:order-1">
-            {filterTabs.map((tab) => {
-              const isActive = selectedCategory === tab.id;
-              return (
-                <button 
-                  key={tab.id}
-                  onClick={() => setSelectedCategory(tab.id)}
-                  className={`relative px-4.5 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-wider cursor-pointer transition-colors duration-300 outline-none z-10 ${
-                    isActive ? "text-white" : "text-slate-600 hover:text-slate-900"
-                  }`}
-                >
-                  {/* Smooth backdrop layout slider */}
-                  {isActive && (
-                    <motion.div 
-                      layoutId="activeCategoryTab"
-                      transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                      className="absolute inset-0 bg-gradient-to-r from-[#D95B16] to-[#EA580C] rounded-xl z-[-1] shadow-[0_4px_12px_rgba(217,91,22,0.25)]"
-                    />
-                  )}
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
 
-          {/* Advanced Search bar input */}
-          <div className="relative flex-1 max-w-xl order-1 xl:order-2">
-            <Search 
-              size={15} 
-              className={`absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors duration-300 ${
-                isSearchFocused ? "text-[#D95B16]" : "text-slate-400"
-              }`} 
-            />
-            <input 
-              type="text"
-              placeholder="Search telemetry standards, cable categories, or specifications..."
-              value={searchQuery}
-              onFocus={() => setIsSearchFocused(true)}
-              onBlur={() => setIsSearchFocused(false)}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white border border-slate-200 focus:border-[#D95B16]/80 focus:bg-white focus:ring-1 focus:ring-[#D95B16]/35 rounded-xl py-3 pl-10 pr-16 text-xs font-semibold text-slate-800 outline-none transition-all placeholder:text-slate-400 font-sans shadow-inner"
-            />
-            
-            {/* Context feedback pill or clear action inside search */}
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-              {searchQuery ? (
-                <button 
-                  onClick={() => setSearchQuery("")}
-                  className="bg-slate-100 hover:bg-slate-200 text-[9px] font-mono font-extrabold text-[#D95B16] px-2.5 py-1 rounded transition-all uppercase cursor-pointer"
-                >
-                  Clear
-                </button>
-              ) : (
-                <div className="hidden sm:flex items-center gap-1 bg-slate-50 border border-slate-100 text-[9.5px] font-mono text-slate-500 px-2 py-0.5 rounded uppercase">
-                  <Sliders size={9} />
-                  <span>FILTER</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-        </div>
 
         {/* GRID OF SERVICES WITH ADVANCED STAGGER AND CARD RENDERS */}
         <AnimatePresence mode="popLayout">
@@ -323,13 +258,10 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({
                       </div>
 
                       {/* Title, Category metadata & description */}
-                      <div className="flex items-start justify-between gap-3 mb-2.5 text-left">
+                      <div className="mb-2.5 text-left">
                         <h3 className="font-sans font-extrabold text-lg text-slate-900 group-hover:text-[#D95B16] transition-colors duration-300 tracking-tight leading-tight">
                           {service.title}
                         </h3>
-                        <div className="h-8 w-8 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-[#D95B16] group-hover:bg-[#D95B16]/10 transition-colors shrink-0">
-                          <LucideIcon name={service.iconName} size={15} className="stroke-[2.2]" />
-                        </div>
                       </div>
                       
                       <p className="text-slate-500 text-xs leading-relaxed text-left font-sans mb-5 line-clamp-3 h-[54px] overflow-hidden">
