@@ -1,6 +1,4 @@
 import { Service, Benefit, Stat, FAQItem } from "./types";
-import fiberSplicingImg from "./assets/images/fiber-splicing.svg";
-import biometricImg from "./assets/images/biometric-system.jpg";
 
 export const SERVICES: Service[] = [
   {
@@ -10,7 +8,7 @@ export const SERVICES: Service[] = [
     fullDescription: "Secure your home or workplace with our expert surveillance setup. We offer ultra-high-definition cameras including dome, bullet, and PTZ models featuring active smart tracking, continuous cloud or local NVR archiving, night-vision infrared sensors, and direct smartphone notifications.",
     iconName: "Camera",
     hot: true,
-    imageUrl: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=600&q=80",
+    imageUrl: "https://6a4d00acb793a9afadfb9df6.imgix.net/sandbox/CCtv%20installation%20.jpeg",
   },
   {
     id: "fiber-splicing",
@@ -19,7 +17,7 @@ export const SERVICES: Service[] = [
     fullDescription: "Minimize db-loss ratios with premium Fujikura core-alignment fusion splicing. We execute precise mechanical or thermal terminations, protect splices with physical heat-shrink tubes, and handle multi-core single-mode or multi-mode indoor/outdoor cable links for maximum structural throughput.",
     iconName: "Cable",
     hot: true,
-    imageUrl: fiberSplicingImg,
+    imageUrl: "https://6a4d00acb793a9afadfb9df6.imgix.net/sandbox/Fiber%20Splicing%20.jpeg",
   },
   {
     id: "network-setup",
@@ -55,7 +53,7 @@ export const SERVICES: Service[] = [
     fullDescription: "Streamline employee clock-ins and increase floor security. We configure robust standalone fingerprint or contactless IR face recognition scanners, integrate door locking mechanisms, and install intuitive admin desktop software platforms.",
     iconName: "Fingerprint",
     hot: false,
-    imageUrl: biometricImg,
+    imageUrl: "https://6a4d00acb793a9afadfb9df6.imgix.net/sandbox/Biomatric.jpeg",
   },
   {
     id: "structured-cabling",
@@ -64,7 +62,7 @@ export const SERVICES: Service[] = [
     fullDescription: "Build a physical framework that scales happily. We construct detailed modular network racks, manage neat patch panels, install protective wire channels, and certify every cable path using advanced network analyzers.",
     iconName: "Shuffle",
     hot: false,
-    imageUrl: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80",
+    imageUrl: "https://img1.wsimg.com/isteam/stock/ZzOweak/:/rs=w:1240,h:620,cg:true,m/cr=w:1240,h:620",
   },
   {
     id: "remote-cctv",
