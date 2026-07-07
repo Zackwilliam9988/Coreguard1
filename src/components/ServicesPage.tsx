@@ -270,7 +270,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({
                     </div>
 
                     {/* Integrated CTA bottom action links */}
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto">
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto gap-3">
                       <button 
                         onClick={() => onSelectService(service)}
                         className="text-[#D95B16] hover:text-[#EA580C] text-[11px] font-bold font-mono tracking-wider uppercase transition-all duration-300 flex items-center gap-1 group/link cursor-pointer bg-transparent border-none"
@@ -279,13 +279,15 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({
                         <ChevronRight size={13} className="transform transition-transform duration-300 group-hover/link:translate-x-1 stroke-[2.5]" />
                       </button>
                       
-                      <button 
-                        onClick={() => onTriggerQuote(service.id)}
-                        className="text-slate-400 hover:text-[#D95B16] text-[10.5px] font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer bg-transparent border-none"
-                        title="Schedule Installation Quote"
+                      <a 
+                        href={`https://wa.me/923185826202?text=${encodeURIComponent("Hello I am interested in this service can I get more details")}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-slate-400 hover:text-emerald-600 text-[10.5px] font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer bg-transparent border-none"
+                        title="Request Live Evaluation via WhatsApp"
                       >
-                        Get Quote
-                      </button>
+                        Request Live Evaluation
+                      </a>
                     </div>
 
                   </motion.div>
