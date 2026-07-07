@@ -1,5 +1,6 @@
 import { Service, Benefit, Stat, FAQItem } from "./types";
 import fiberSplicingImg from "./assets/images/fiber-splicing.svg";
+import biometricImg from "./assets/images/biometric-system.jpg";
 
 export const SERVICES: Service[] = [
   {
@@ -54,7 +55,7 @@ export const SERVICES: Service[] = [
     fullDescription: "Streamline employee clock-ins and increase floor security. We configure robust standalone fingerprint or contactless IR face recognition scanners, integrate door locking mechanisms, and install intuitive admin desktop software platforms.",
     iconName: "Fingerprint",
     hot: false,
-    imageUrl: "https://images.unsplash.com/photo-1601597111158-2fceff270190?auto=format&fit=crop&w=600&q=80",
+    imageUrl: biometricImg,
   },
   {
     id: "structured-cabling",
