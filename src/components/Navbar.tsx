@@ -43,9 +43,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate, contac
             <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-100 flex items-center justify-center bg-white">
               <img src={logo} alt="CoreGuard Logo" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             </div>
-            <div className="hidden sm:flex flex-col leading-tight">
+            <div className="flex flex-col leading-tight">
               <span className="font-display font-extrabold text-sm text-slate-900 uppercase tracking-tight">CoreGuard</span>
-              <span className="text-[10px] text-slate-500 font-mono">Secure • Connect • Protect</span>
+              <span className="hidden sm:block text-[10px] text-slate-500 font-mono">Secure • Connect • Protect</span>
             </div>
           </div>
 
