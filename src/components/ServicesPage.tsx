@@ -12,7 +12,8 @@ import {
   Compass, 
   TrendingUp, 
   ArrowUpRight, 
-  ShieldAlert
+  ShieldAlert,
+  MessageCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -230,63 +231,58 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({
                     key={service.id}
                     variants={cardVariants}
                     whileHover={{ y: -5 }}
-                    className="bg-white border border-slate-100 rounded-3xl p-5.5 relative flex flex-col justify-between shadow-md hover:shadow-xl hover:border-orange-100 transition-all duration-300 group overflow-hidden"
+                    onClick={() => onSelectService(service)}
+                    className="bg-white border border-slate-100 rounded-3xl p-5.5 relative flex flex-col justify-between shadow-md hover:shadow-xl hover:border-orange-100 transition-all duration-300 group overflow-hidden cursor-pointer"
                   >
-                    <div>
-                      {/* Image banner wrapper with full overlays */}
-                      <div className="relative w-full h-44 rounded-2xl overflow-hidden mb-5 border border-slate-100 bg-slate-50">
+                    <div className="space-y-4">
+                      <div className="relative w-full h-44 rounded-[2rem] overflow-hidden mb-5 border border-slate-100 bg-slate-50 shadow-sm">
                         <img 
                           src={service.imageUrl || "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80"} 
                           alt={service.title} 
                           referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover opacity-95 group-hover:opacity-100 group-hover:scale-[1.04] transition-all duration-700 ease-out"
+                          className="w-full h-full object-cover opacity-95 group-hover:opacity-100 group-hover:scale-[1.05] transition-all duration-700 ease-out"
                         />
-                        {/* Shimmer gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 via-transparent to-transparent" />
-                        
-                        {/* Dynamic category badge overlay inside image */}
-                        <span className="absolute top-3 left-3 text-[7.5px] font-mono font-black text-white bg-slate-900/80 backdrop-blur-md px-2.5 py-1 rounded-lg uppercase tracking-wider">
-                          {service.id.includes("fiber") ? "OTDR Fiber" : service.id.includes("cctv") ? "Surveillance" : "Networking"}
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/25 via-transparent to-transparent" />
+                        <span className="absolute top-3 left-3 text-[8px] font-mono font-black text-slate-900 bg-white/90 px-3 py-1 rounded-full uppercase tracking-[0.28em] shadow-sm">
+                          {service.id.includes("fiber") ? "OTDR FIBER" : service.id.includes("cctv") ? "SURVEILLANCE" : service.id.includes("biometric") ? "ACCESS" : "NETWORK"}
                         </span>
-                        
-                        {/* Featured popular badge */}
                         {service.hot && (
-                          <span className="absolute top-3 right-3 text-[8px] font-mono font-black text-white bg-[#D95B16] px-2.5 py-1 rounded-full uppercase tracking-wider shadow-md z-10">
+                          <span className="absolute bottom-3 right-3 text-[9px] font-semibold text-white bg-[#D95B16] px-3 py-1 rounded-full uppercase tracking-wide shadow-lg">
                             POPULAR
                           </span>
                         )}
                       </div>
 
-                      {/* Title, Category metadata & description */}
-                      <div className="mb-2.5 text-left">
-                        <h3 className="font-sans font-extrabold text-lg text-slate-900 group-hover:text-[#D95B16] transition-colors duration-300 tracking-tight leading-tight">
+                      <div className="mb-3 text-left">
+                        <h3 className="font-sans font-black text-xl text-slate-900 group-hover:text-[#D95B16] transition-colors duration-300 tracking-tight leading-tight">
                           {service.title}
                         </h3>
                       </div>
                       
-                      <p className="text-slate-500 text-xs leading-relaxed text-left font-sans mb-5 line-clamp-3 h-[54px] overflow-hidden">
+                      <p className="text-slate-600 text-sm leading-relaxed text-left font-sans min-h-[72px]">
                         {service.description}
                       </p>
                     </div>
 
-                    {/* Integrated CTA bottom action links */}
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto gap-3">
+                    <div className="pt-5 border-t border-slate-100 mt-auto flex flex-col sm:flex-row sm:items-center gap-3">
                       <button 
-                        onClick={() => onSelectService(service)}
-                        className="text-[#D95B16] hover:text-[#EA580C] text-[11px] font-bold font-mono tracking-wider uppercase transition-all duration-300 flex items-center gap-1 group/link cursor-pointer bg-transparent border-none"
+                        onClick={(e) => { e.stopPropagation(); onSelectService(service); }}
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#D95B16] hover:bg-[#C2410C] text-white text-xs font-bold uppercase tracking-widest px-4 py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl"
                       >
                         <span>Explore more</span>
-                        <ChevronRight size={13} className="transform transition-transform duration-300 group-hover/link:translate-x-1 stroke-[2.5]" />
+                        <ChevronRight size={14} className="stroke-[3]" />
                       </button>
                       
                       <a 
-                        href={`https://wa.me/923185826202?text=${encodeURIComponent("Hello I am interested in this service can I get more details")}`}
+                        href={`https://wa.me/923185826202?text=${encodeURIComponent(`Hello, I would like to contact CoreGuard about the ${service.title} service.`)}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-slate-400 hover:text-emerald-600 text-[10.5px] font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer bg-transparent border-none"
-                        title="Request Live Evaluation via WhatsApp"
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[#1f4f2f] hover:text-white text-xs font-semibold uppercase tracking-widest px-4 py-3 rounded-2xl border border-[#DDEBDF] bg-emerald-50 hover:bg-[#25D366] hover:border-[#25D366] transition-all duration-300"
+                        title="Contact on WhatsApp"
                       >
-                        Request Live Evaluation
+                        <MessageCircle size={16} className="text-[#25D366]" />
+                        <span>Contact</span>
                       </a>
                     </div>
 

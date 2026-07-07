@@ -18,7 +18,8 @@ import {
   FileText,
   Lock,
   Compass,
-  Database
+  Database,
+  MessageCircle
 } from "lucide-react";
 import { motion } from "motion/react";
 import { Service } from "../types";
@@ -235,6 +236,11 @@ interface ServiceDetailViewProps {
 export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({ service, onBack, onBook }) => {
   const meta = serviceMetadata[service.id] || getFallbackMetadata(service.title);
 
+  const openWhatsAppContact = () => {
+    const message = `Hello, I would like to contact CoreGuard about the ${service.title} service.`;
+    window.open(`https://wa.me/923185826202?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+  };
+
   // Scroll to top on mount
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -285,20 +291,20 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({ service, o
                 {service.description}
               </p>
 
-              <div className="flex flex-wrap items-center gap-4 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3.5 pt-2">
                 <button 
-                  onClick={() => onBook(service.id)}
-                  className="bg-[#D95B16] hover:bg-[#C2410C] text-white font-black py-3.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg shadow-orange-500/10 hover:scale-[1.03] active:scale-[0.98] cursor-pointer text-xs uppercase tracking-wider flex items-center gap-2 group font-mono"
+                  onClick={openWhatsAppContact}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe57] text-white font-black py-3.5 px-6 rounded-2xl transition-all shadow-lg hover:shadow-2xl text-xs uppercase tracking-widest font-mono"
                 >
-                  <span>Request Live Evaluation</span>
-                  <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform stroke-[2.5]" />
+                  <MessageCircle size={16} className="text-white" />
+                  <span>Contact on WhatsApp</span>
                 </button>
                 <button 
                   onClick={onBack}
-                  className="bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 hover:border-orange-200 font-mono font-bold py-3.5 px-5 rounded-xl transition-all text-xs uppercase tracking-wider cursor-pointer flex items-center gap-1.5"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 hover:border-orange-200 font-mono font-bold py-3.5 px-5 rounded-2xl transition-all text-xs uppercase tracking-wider cursor-pointer"
                 >
                   <ArrowLeft size={13} />
-                  Return to Landing
+                  Explore other solutions
                 </button>
               </div>
             </div>
@@ -493,10 +499,10 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({ service, o
               
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
                 <button 
-                  onClick={() => onBook(service.id)}
+                  onClick={openWhatsAppContact}
                   className="bg-[#D95B16] hover:bg-[#C2410C] text-white font-mono font-black py-3 px-6 rounded-xl transition-all shadow-sm hover:scale-[1.02] cursor-pointer text-xs uppercase tracking-wider text-center border-none"
                 >
-                  Request Dynamic Quote
+                  Contact
                 </button>
                 <button 
                   onClick={onBack}
