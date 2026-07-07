@@ -224,7 +224,7 @@ export const QuoteDialog: React.FC<QuoteDialogProps> = ({
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="John Doe"
-                        className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#D95B16]/5 transition-all duration-200 font-sans"
+                        className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white rounded-xl px-3.5 py-2.5 text-base md:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#D95B16]/5 transition-all duration-200 font-sans"
                       />
                     </div>
 
@@ -239,7 +239,7 @@ export const QuoteDialog: React.FC<QuoteDialogProps> = ({
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="john@example.com"
-                        className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#D95B16]/5 transition-all duration-200 font-sans"
+                        className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white rounded-xl px-3.5 py-2.5 text-base md:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#D95B16]/5 transition-all duration-200 font-sans"
                       />
                     </div>
 
@@ -254,7 +254,7 @@ export const QuoteDialog: React.FC<QuoteDialogProps> = ({
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         placeholder="+92 300 1234567"
-                        className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#D95B16]/5 transition-all duration-200 font-sans"
+                        className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white rounded-xl px-3.5 py-2.5 text-base md:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#D95B16]/5 transition-all duration-200 font-sans"
                       />
                     </div>
 

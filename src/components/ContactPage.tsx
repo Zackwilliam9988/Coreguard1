@@ -202,7 +202,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ contactInfo, onTrigger
                     placeholder="Enter your first and last name"
                     value={formName}
                     onChange={(e) => setFormName(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white focus:ring-1 focus:ring-[#D95B16] rounded-xl py-3.5 px-4 text-xs font-semibold text-slate-800 outline-none transition-all placeholder:text-slate-400"
+                    className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white focus:ring-1 focus:ring-[#D95B16] rounded-xl py-3.5 px-4 text-base md:text-xs font-semibold text-slate-800 outline-none transition-all placeholder:text-slate-400"
                   />
                 </div>
               </div>
@@ -220,7 +220,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ contactInfo, onTrigger
                     placeholder="Enter your email address (e.g. name@company.com)"
                     value={formEmail}
                     onChange={(e) => setFormEmail(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white focus:ring-1 focus:ring-[#D95B16] rounded-xl py-3.5 px-4 text-xs font-semibold text-slate-800 outline-none transition-all placeholder:text-slate-400"
+                    className="w-full bg-slate-50 border border-slate-100 focus:border-[#D95B16] focus:bg-white focus:ring-1 focus:ring-[#D95B16] rounded-xl py-3.5 px-4 text-base md:text-xs font-semibold text-slate-800 outline-none transition-all placeholder:text-slate-400"
                   />
                 </div>
               </div>
@@ -241,7 +241,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ contactInfo, onTrigger
                       setFormPhone(e.target.value);
                       if (phoneError) setPhoneError("");
                     }}
-                    className={`w-full bg-slate-50 border focus:bg-white focus:ring-1 rounded-xl py-3.5 px-4 text-xs font-semibold text-slate-800 outline-none transition-all placeholder:text-slate-400 ${
+                    className={`w-full bg-slate-50 border focus:bg-white focus:ring-1 rounded-xl py-3.5 px-4 text-base md:text-xs font-semibold text-slate-800 outline-none transition-all placeholder:text-slate-400 ${
                       phoneError 
                         ? "border-red-500/50 focus:border-red-500 focus:ring-red-500" 
                         : "border-slate-100 focus:border-[#D95B16] focus:ring-[#D95B16]"

@@ -422,7 +422,7 @@ export const WhyUsPage: React.FC = () => {
                     placeholder="Search reviews by company, author or services..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-white border border-slate-200 focus:border-[#D95B16]/40 rounded-xl px-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition-all shadow-inner"
+                    className="w-full bg-white border border-slate-200 focus:border-[#D95B16]/40 rounded-xl px-4 py-2 text-base md:text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition-all shadow-inner"
                   />
                   <div className="absolute right-3.5 top-2.5 text-slate-400 text-[10px] font-mono">
                     {filteredReviews.length} matching
@@ -590,7 +590,7 @@ export const WhyUsPage: React.FC = () => {
                       placeholder="e.g. Hammad Qureshi"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 focus:border-[#D95B16]/40 rounded-xl px-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition-all shadow-inner"
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-[#D95B16]/40 rounded-xl px-4 py-2.5 text-base md:text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition-all shadow-inner"
                     />
                   </div>
 
@@ -604,7 +604,7 @@ export const WhyUsPage: React.FC = () => {
                       placeholder="e.g. Head of Security, Allied Trust Group"
                       value={designation}
                       onChange={(e) => setDesignation(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 focus:border-[#D95B16]/40 rounded-xl px-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition-all shadow-inner"
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-[#D95B16]/40 rounded-xl px-4 py-2.5 text-base md:text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition-all shadow-inner"
                     />
                   </div>
 
@@ -616,7 +616,7 @@ export const WhyUsPage: React.FC = () => {
                     <select
                       value={selectedService}
                       onChange={(e) => setSelectedService(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 focus:border-[#D95B16]/40 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none transition-all shadow-sm"
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-[#D95B16]/40 rounded-xl px-4 py-2.5 text-base md:text-xs text-slate-800 focus:outline-none transition-all shadow-sm"
                     >
                       <option value="CCTV Installation">CCTV Camera Installation</option>
                       <option value="Fiber Splicing (OTDR)">Fiber Splicing & Testing</option>
@@ -638,7 +638,7 @@ export const WhyUsPage: React.FC = () => {
                       placeholder="Describe the physical installation quality, neatness, SLA responsiveness, and technician professionalism..."
                       value={reviewText}
                       onChange={(e) => setReviewText(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 focus:border-[#D95B16]/40 rounded-xl px-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition-all resize-none leading-relaxed shadow-inner"
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-[#D95B16]/40 rounded-xl px-4 py-2.5 text-base md:text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition-all resize-none leading-relaxed shadow-inner"
                     />
                   </div>
 

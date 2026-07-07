@@ -677,7 +677,7 @@ export const SophiaChat: React.FC = () => {
                         }
                         value={inputVal}
                         onChange={(e) => setInputVal(e.target.value)}
-                        className="w-full bg-white border border-slate-200 focus:border-[#D95B16] focus:ring-1 focus:ring-[#D95B16]/30 rounded-xl pl-9 pr-3 py-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition-all font-semibold"
+                        className="w-full bg-white border border-slate-200 focus:border-[#D95B16] focus:ring-1 focus:ring-[#D95B16]/30 rounded-xl pl-9 pr-3 py-3 text-base md:text-xs text-slate-800 placeholder-slate-400 focus:outline-none transition-all font-semibold"
                       />
                       {step === "name" ? (
                         <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={13} />
